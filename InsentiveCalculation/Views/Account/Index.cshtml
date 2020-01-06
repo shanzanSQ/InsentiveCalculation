@@ -1,0 +1,109 @@
+﻿
+@{
+    Layout = null;
+    ViewBag.Title ="Insentive Login";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Incentive Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--===============================================================================================-->
+    <link rel="icon" type="image/png" href="image/favicon.ico" />
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Content/style.css" rel="stylesheet" />
+    <link href="~/Content/sweetalert.css" rel="stylesheet" />
+    @Styles.Render("~/Content/bootstrap.min.css")
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+    <div class="main_body">
+        <div class="section_left">
+            <div class="firstlogodiv">
+                <div class="logo">
+                    <a href="http://sqgc.com/"><img width="100" src="@Url.Content("~/image/logo.png")" /></a>
+                </div>
+                <div class="slogan">
+                    <p align="center">
+                        <img width="140" src="@Url.Content("~/image/slogan.png")" />
+                    </p>
+                </div>
+                <br />
+                <h1 id="top_header">Incentive Calculation System</h1>
+            </div>
+        </div>
+        <div class="section_right">
+            <div class="signin_form">
+                <h1 style="text-align:center;font-weight:bold;font-size:30px">Please Sign In</h1>
+                <hr />
+                <label for="user_email">Enter Your Email</label>
+                <input class="form-control" id="user_email" type="text" placeholder="Enter Your User Email" required />
+                <label for="user_password">Enter Your Password</label>
+                <input class="form-control" id="user_password" type="password" placeholder="Enter Your Password here " required />
+                <br />
+                <button class="btn btn-primary" id="signin_button" style="width:100%">Sign In</button>
+            </div>
+        </div>
+        <div style="text-align:center" class="footer">
+            <p> copyright  version of <a href="https://www.sqgc.com/"> SQ Group</a></p>
+        </div>
+    </div>
+    @Scripts.Render("~/bundles/jquery")
+    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/sweetalert.min.js"></script>
+    <script type="text/javascript">
+
+    $(document).keypress(function(e) {
+        if (e.keyCode == 13) {
+             var name = $("#user_email").val();
+            var pass = $("#user_password").val();
+            checkLogin(name, pass);
+        }
+    });
+
+    $("#signin_button").click(function () {
+        var name = $("#user_email").val();
+        var pass = $("#user_password").val();
+        checkLogin(name, pass);
+    });
+
+    function checkLogin(username,userpass) {
+        var urlpath = '@Url.Action("CheckLogin", "Account")';
+        $.ajax({
+            url: urlpath,
+            dataType: 'json',
+            type: "Post",
+            data: {
+                UserEmail:username,
+                UserPassword:userpass
+            },
+            async: true,
+            success: function (result) {
+                if (result.isSuccess) {
+                    swal({
+                        title: result.msg,
+                        message: result.msg,
+                                   type: 'error',
+                                    closeOnCancel: true
+                                });
+                } else {
+                    swal({
+                                    title: 'Login Successfully!!',
+                                    type: 'success',
+                                    closeOnCancel: true
+                                },
+                        function () {
+                            window.location.href = result.msg;
+                                });
+                }
+
+            }
+        });
+    }
+    </script>
+
+</body>
+</html>

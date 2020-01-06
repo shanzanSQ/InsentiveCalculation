@@ -1,0 +1,42 @@
+﻿<style>
+    #total_div {
+        margin-left: 20px;
+    }
+
+    .lable_table {
+        width: 20%;
+        font-weight: bold;
+    }
+</style>
+<div id="total_div" class="container-fluid">
+    <div class="row">
+        <table style="text-align:center;align-content:center" class="table table-responsive">
+            <tr>
+                <td class="lable_table">Enter New Style Name : </td>
+                <td><input type="text" id="styleName" class="form-control" placeholder="Enter  New Style Name" /></td>
+                <td><button id="addNewStyle" class="btn btn-primary">Add New Style</button></td>
+            </tr>
+        </table>
+    </div>
+    <div id="show_view"></div>
+</div>
+@Scripts.Render("~/bundles/jquery")
+<script>
+    LoadStyle();
+    function LoadStyle() {
+        var urlpath = '@Url.Action("ShowStylesFromDatabase", "Home")';
+            $.ajax({
+                url: urlpath,
+                type: "Post",
+                data: {},
+                    async: true,
+                    success: function(data) {
+                        if (data) {
+                            $('#show_view').empty();
+                            $('#show_view').html(data);
+                            $("#show_view").DataTable();
+                        }
+                    }
+                });
+    }
+</script>

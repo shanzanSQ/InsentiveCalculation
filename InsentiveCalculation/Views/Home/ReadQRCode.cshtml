@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewBag.Title = "ReadQRCode";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/LoadingModal.css" rel="stylesheet" />
+<div class="container">
+    <h1 style="text-align:center">Read QR Code </h1>
+    <div class="row">
+        <div class="col-md-4">
+            <label for="root_select"> Read Data from Directory : </label>
+            <h3 id="root_select">Directory Name</h3>
+            <label for="selectedDate">Select Current Date : </label>
+            <input id="selectedDate" type="date" class="form-control" />
+            <br />
+            <input type="submit" value="Confirm" id="readQrCode" class="btn btn-success form-control" />
+        </div>
+        <div class="col-md-7">
+            <h1 id="resultval">Hello</h1>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="loadMe" tabindex="-1" role="dialog" aria-labelledby="loadMeLabel">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="loader"></div>
+                <div clas="loader-txt">
+                    <p>Please Wait Until The Data is Processing....................<br>
+                    <br><small>We will collect all the barcode and calculate the SMV, Thanks for being with us
+                        <br />
+                        SQ Group Insentive Calculation System
+                        </small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script type="text/javascript">
+    $("#readQrCode").click(function () {
+        $("#loadMe").modal({
+          backdrop: "static", //remove ability to close modal with click
+          keyboard: false, //remove option to close with keyboard
+          show: true //Display loader!
+        });
+        var selectdate = formatDate($('#selectedDate').val());
+         var urlpath = '@Url.Action("ReadQRfromSource", "Home")';
+         $.ajax({
+                    url: urlpath,
+             type: "Post",
+             data: {SelectDate: selectdate },
+                    async: true,
+             success: function (result) {
+                 $("#loadMe").modal("hide");
+                 $("resultval").html=result;
+                            }
+                        });
+    });
+    function formatDate(date) {
+                var d = new Date(date),
+                    month = '' + (d.getMonth() + 1),
+                    day = '' + d.getDate(),
+                    year = d.getFullYear();
+
+                if (month.length < 2)
+                    month = '0' + month;
+                if (day.length < 2)
+                    day = '0' + day;
+
+                return [year, month, day].join('-');
+    }
+</script>
+
