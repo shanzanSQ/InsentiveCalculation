@@ -1,0 +1,343 @@
+﻿
+@{
+    ViewBag.Title = "WorkerSticker";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    #employeeInformation {
+        display: block;
+        height: 400px;
+        overflow-y: scroll;
+    }
+    th, td {
+        text-align: center;
+    }
+
+    #employeeInformation th {
+        position: sticky;
+        top: 0;
+        background: #9bb18b;
+    }
+    .btn,.form-control{
+        border-radius:0px;
+    }
+</style>
+<font size="2">
+    <div class="container-fluid">
+        <h1 style="text-align:center">Generate Worker Sticker </h1>
+        <div class="row">
+            <div class="col-md-2">
+                <label for="selectBU">Select Business Unit</label>
+                <select id="selectBU" class="form-control">
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="departmetselect">Select Department</label>
+                <select id="departmetselect" class="form-control">
+                    <option>	Assembly	</option>
+                    <option>	PPMC	</option>
+                    <option>	Technical & Quality	</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="sectionInfo">Select Section Info</label>
+                <select id="sectionInfo" class="form-control">
+                    <option>	Finishing	</option>
+                    <option>	Linking	</option>
+                    <option>	Packing	</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="subsection">Select Subsection </label>
+                <select id="subsection" class="form-control">
+                    <option>	Da Vinci	</option>
+                    <option>	Da Vinci- Packing	</option>
+                    <option>	Edison	</option>
+                    <option>	Edison- Packing	</option>
+                    <option>	Galileo	</option>
+                    <option>	Galileo- Packing	</option>
+                    <option>	PD	</option>
+                    <option>	Training Center	</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="selectLineinfo">Select Line Info</label>
+                <select id="selectLineinfo" class="form-control">
+                    <option>	A-P2P	</option>
+                    <option>	A-01	</option>
+                    <option>	A-02	</option>
+                    <option>	A-03	</option>
+                    <option>	A-04	</option>
+                    <option>	A-05	</option>
+                    <option>	A-06	</option>
+                    <option>	A-07	</option>
+                    <option>	A-08	</option>
+                    <option>	A-09	</option>
+                    <option>	A-10	</option>
+                    <option>	A-11	</option>
+                    <option>	A-12	</option>
+                    <option>	A-13	</option>
+                    <option>	A-PK	</option>
+                    <option>	MLV	</option>
+                    <option>	B-08	</option>
+                    <option>	B-10	</option>
+                    <option>	P2P	</option>
+                    <option>		</option>
+                    <option>	A-14	</option>
+                    <option>	A-15	</option>
+                    <option>	A-16	</option>
+                    <option>	A-17	</option>
+                    <option>	A-18	</option>
+                    <option>	A-19	</option>
+                    <option>	A-20	</option>
+                    <option>	A-21	</option>
+                    <option>	A-22	</option>
+                    <option>	A-23	</option>
+                    <option>	A-24	</option>
+                    <option>	A-25	</option>
+                    <option>	A-26	</option>
+                    <option>	A-27	</option>
+                    <option>	A-29	</option>
+                    <option>	A-TR	</option>
+                    <option>	MGT	</option>
+                    <option>	Embroidery	</option>
+                    <option>	TR	</option>
+                    <option>	AD	</option>
+                    <option>	IE	</option>
+                    <option>	B-12	</option>
+                    <option>	Cixing	</option>
+                    <option>	Collar	</option>
+                    <option>	Module-01	</option>
+                    <option>	Module-02	</option>
+                    <option>	Module-03	</option>
+                    <option>	Module-04	</option>
+                    <option>	Module-05	</option>
+                    <option>	Module-06	</option>
+                    <option>	Module-07	</option>
+                    <option>	Module-08	</option>
+                    <option>	Placket	</option>
+                    <option>	QA	</option>
+                    <option>	SHIMA-01	</option>
+                    <option>	SHIMA-02	</option>
+                    <option>	STOLL-01	</option>
+                    <option>	Module-09	</option>
+                    <option>	Module-10	</option>
+                    <option>	Module-11	</option>
+                    <option>	Module-12	</option>
+                    <option>	Module-13	</option>
+                    <option>	MA	</option>
+                    <option>	Un Wi	</option>
+                    <option>	Pre-loop	</option>
+                    <option>	MC	</option>
+                    <option>	B-P2P	</option>
+                    <option>	SM	</option>
+                    <option>	B-07	</option>
+                    <option>	B-09	</option>
+                    <option>	B-02	</option>
+                    <option>	ST	</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="searchworker">Action</label>
+                <input id="searchworker" type="button" value="Search Worker" class="btn btn-info form-control" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3"></div>
+            <div class="col-md-2">
+                <label for="employeecode">Enter Employee Code</label>
+                <input id="employeecode" type="text" class="form-control" placeholder="enter employee code" />
+            </div>
+            <div class="col-md-2">
+                <label id="searchByemployee">Search By Employee Code</label>
+                <input id="searchByemployee" onclick="SearchByWorkerId()" type="button" class="btn btn-primary form-control" value="Search By Code"/>
+            </div>
+            <div class="col-md-2">
+                <label for="workerSticker">Action</label>
+                <input id="workerSticker" type="button" value="Genarate Sticker" class="btn btn-success form-control" />
+            </div>
+            <div class="col-md-3"></div>
+        </div>
+        <div class="row">
+            <br />
+            <a href="#" id="downloadpdf" hidden target="_blank">Download Genarated Barcode File</a>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-default" id="userInformation"> </div>
+                @*<table border="1" style="text-align:center;width:80%;height:400px" id="employeeInformation" class="table table-striped table-responsive">
+                        <tr>
+                            <th width="5%"><input id="checkAll" type="checkbox" value="0" /></th>
+                            <th width="10%">No</th>
+                            <th width="25%">Employee Code</th>
+                            <th width="35%">Employee Name</th>
+                            <th width="25%">Employee Designation </th>
+                        </tr>
+                    </table>*@
+            </div>
+        </div>
+    </div>
+    </font>
+    @Scripts.Render("~/bundles/jquery")
+    <script type="text/javascript">
+    LoadBusinessUnit();
+    function LoadBusinessUnit() {
+        $('#selectBU').css({ "border-color": "#d3d3d3" });
+        var urlpath = '@Url.Action("LoadBusinessUnit", "Home")';
+        $.ajax({
+            url: urlpath,
+            dataType: 'json',
+            type: "Post",
+            data: {},
+            async: true,
+            success: function (data) {
+                $('#selectBU').empty();
+                $('#selectBU').append("<option value='0'>--Select Business Unit--</option>");
+                for (var i = 0; i < data.length; i++) {
+                    $("#selectBU").append($("<option></option>").val(data[i].BusinessUnitId)
+                        .html(data[i].BusinessUnitName));
+                }
+            }
+        });
+    }
+    //$("#checkAll").click(function (e) {
+    //      $(this).closest('table').find('td input:checkbox').prop('checked', this.checked);
+    //        // $('input:checkbox').not(this).prop('checked', this.checked);
+    //            // $(this).find('input[name^="operationId"]').not(this).prop('checked', this.checked);
+    //});
+        $("#searchworker").click(function () {
+            if ($("#selectBU").val() == "0") {
+                swal({
+                    title: 'Please Select The Business Unit First',
+                    type: 'error',
+                    closeOnCancel: true
+                });
+            } else {
+                findWorker();
+            }
+        
+        });
+        $("#workerSticker").click(function () {
+            var rowCount = $('#userInformationTable tbody tr').length;
+            if (rowCount > 0) {
+                genarateSticker();
+            } else {
+                swal({
+                    title: 'No Worker Selected',
+                    type: 'error',
+                    closeOnCancel: true
+                });
+            }
+        
+    });
+    function checkallUser() {
+        if ($('#checkuserAll').is(':checked')) {
+            $("#userInformationTable").closest('table').find('td input:checkbox').prop('checked', true);
+        } else {
+            $("#userInformationTable").closest('table').find('td input:checkbox').prop('checked', false);
+        }
+    }
+    function findWorker() {
+        $('#downloadpdf').hide();
+        var buid = $('#selectBU').val();
+        var department = $('#departmetselect').children("option:selected").html().trim();
+        var section = $('#sectionInfo').children("option:selected").html().trim();
+        var subsection = $('#subsection').children("option:selected").html().trim();
+        var line = $('#selectLineinfo').children("option:selected").html().trim();
+
+        var urlpath = '@Url.Action("GetWorkerSearch", "Home")';
+        $.ajax({
+            url: urlpath,
+            type: "Post",
+            data: { BusinessUnitId: buid, Department: department, Section: section, Subsection: subsection,Line:line },
+            async: true,
+            success: function (data) {
+                if (data) {
+                            $('#userInformation').empty();
+                            $('#userInformation').html(data);
+                            $("#userInformationTable").DataTable();
+
+                }
+                //$("#checkAll").prop("checked", false);
+                //$("#employeeInformation").find("tr:gt(0)").remove();
+                //for (var i = 0; i < data.length; i++) {
+                //     var newRow = $("<tr>");
+                //     var cols = "";
+                //     cols += '<td><input type="checkbox" name="operationId"  style="text-align:center" value="' + data[i].UserInformationId + '" /></td>';
+                //     cols += '<td><p>'+(i+1)+ '</p></td>';
+                //     cols += '<td><p>'+ data[i].UserInformationPhoneNumber + '</p></td>';
+                //     cols += '<td><p>'+ data[i].UserInformationName + '</p></td>';
+                //     cols += '<td><p>'+ data[i].DesignationName + '</p></td></tr>';
+                //     newRow.append(cols);
+                //    $("#employeeInformation").append(newRow);
+                //}
+            }
+        });
+    }
+    function SearchByWorkerId() {
+            if ($("#selectBU").val() == "0") {
+                swal({
+                    title: 'Please Select The Business Unit First',
+                    type: 'error',
+                    closeOnCancel: true
+                });
+            } else {
+                var employeecode = $("#employeecode").val();
+                var businessUnit=$("#selectBU").val();
+                var urlpath = '@Url.Action("SearchEmployeeBYCode", "Home")';
+                $.ajax({
+                    url: urlpath,
+                    type: "Post",
+                    data: { EmployeeCode: employeecode, BusinessUnitId: businessUnit },
+                    async: true,
+                    success: function (data) {
+                        if (data) {
+                            $('#userInformation').empty();
+                            $('#userInformation').html(data);
+                            $("#userInformationTable").DataTable();
+                        }
+                    }
+                });
+            }
+
+            
+    }
+    function genarateSticker() {
+                var jsonObj = [];
+                $('#userInformationTable tbody tr').each(function() {
+                    var id = $(this).attr('id');
+                    var row = $(this).closest("tr")[0];
+                    if ($('#chk_' + id).is(':checked')) {
+                        var jsonData = {};
+                        jsonData["UserSQNumber"] = row.cells[2].innerHTML;
+                        jsonData["UserInformationName"] = row.cells[3].innerHTML;
+                        jsonData["DesignationName"] = row.cells[4].innerHTML;
+                        jsonObj.push(jsonData);
+                    }
+                });
+                var urlpath = '@Url.Action("GenarateBarcodeWorker", "Home")';
+                $.ajax({
+                    url: urlpath,
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(jsonObj),
+                    dataType: 'json',
+                    type: "POST",
+                    success: function(result) {
+                        if (result.isSuccess == true) {
+                            swal({
+                                    title: 'Worker Barcode Genarated',
+                                    type: 'success',
+                                    closeOnCancel: true
+
+                            }, function () {
+                                    $('#downloadpdf').show();
+                                    $('#downloadpdf').attr("href", "/Home/DownloadFile?filename=" + result.data);
+                            });
+
+                        }
+
+                    }
+                });
+    }
+    </script>

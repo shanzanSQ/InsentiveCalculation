@@ -1,0 +1,38 @@
+﻿@model IEnumerable<InsentiveCalculation.Models.ReportModel>
+<div class="box">
+    <table class="table" border="1" id="reportTable" style="text-align:center">
+        <thead>
+            <tr>
+                <th>SL</th>
+                <th>Employee Code</th>
+                <th>Total Barcode</th>
+                <th>Total SMV</th>
+                <th>FileName</th>
+                <th>DirectoryName</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int count = 1;}
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@count</td>
+                    <td>@item.EmployeeId</td>
+                    <td>@item.NoOFBarcode</td>
+                    <td>@item.TotalSMV</td>
+                    <td>@item.FileName</td>
+                    <td>@item.DirectoryName</td>
+                    <td>
+                        @if (item.EmployeeId.Length==0)
+                        {
+                            <input type="text"  id="newCode_@item.FileNameId" />
+                            <input type="button" class="btn btn-sm btn-success" value="Add" onclick="AddNewEmployeeToFile(@item.FileNameId, '#newCode_@item.FileNameId')" />
+                        }
+                    </td>
+                </tr>
+                count++;
+            }
+        </tbody>
+    </table>
+</div>

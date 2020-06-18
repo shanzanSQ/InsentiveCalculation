@@ -3,6 +3,575 @@
     ViewBag.Title = "GenarateStickers";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+<link href="~/Content/LoadingModal.css" rel="stylesheet" />
 
-<h2>GenarateStickers</h2>
+<style>
+    table,
+    thead,
+    tr,
+    tbody,
+    th,
+    td {
+        text-align: center;
+    }
 
+    th {
+        position: sticky;
+        top: 0;
+        background: #9bb18b;
+    }
+
+    .btn, .form-control {
+        border-radius: 0px;
+    }
+</style>
+<font size="2" face="Times New Roman">
+    <div class="container" id="maincontainer">
+        <br />
+        <div class="row">
+            <div class="col-md-5">
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="selectBU">Select Business Unit</label>
+                        <select id="selectBU" class="form-control">
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="buyerSelect">Select Buyer</label>
+                        <select id="buyerSelect" class="form-control">
+                        </select>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="styleSelect">Select Style</label>
+                        <select id="styleSelect" class="form-control">
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="dateSelect">Select Date</label>
+                        <input type="date" class="form-control" id="dateSelect" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="po_number">Select PO Number </label>
+                        <select class="form-control" id="po_number"></select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="purchase_Quantity">PO Quantity </label>
+                        <input type="text" disabled class="form-control" id="purchase_Quantity" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="color">Color : </label>
+                        <input type="text" class="form-control" id="color" />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="size">Bundle Size : </label>
+                        <input type="text" class="form-control" id="size" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="cut_No">Cut No : </label>
+                        <input type="text" class="form-control" id="cut_No" />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="shade_no">Shade : </label>
+                        <input type="text" class="form-control" id="shade_no" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <label for="bundle_quantity">Pcs / Bundle : </label>
+                        <input type="text" class="form-control" id="bundle_quantity" />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="no_of_bundle">No of Bundle: </label>
+                        <input type="text" class="form-control" id="no_of_bundle" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div style="display:none" class="col-md-6">
+                        <label for="ProductName">Product Name : </label>
+                        <input type="text" class="form-control" style="display:none" id="ProductName" value="productname" />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="alreadyGenarate">Already Genarated Quantity </label>
+                        <input type="text" disabled class="form-control" id="alreadyGenarate" />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="remaining_to">Remaining to Genarate </label>
+                        <input type="text" disabled class="form-control" id="remaining_to" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12" style="text-align: center">
+                        <br />
+                        <button style="width:50%;display:none" class="btn btn-primary" id="nextButton"> NEXT </button>
+                        <br />
+                        <button style="width:50%;display:none" class="btn btn-success" id="genarate_Barcode"> Genarate Barcode  </button>
+                        <br />
+                        <a href="#" id="downloadpdf" hidden target="_blank">Download File</a>
+                    </div>
+                </div>
+                <div style="display:none;text-align:center" class="row" id="showReason">
+                    <div class="col-md-6">
+                        <label for="enter_quantity">Enter Quantity </label>
+                        <input type="text" class="form-control" id="enter_quantity" placeholder="Enter Extra Quantity" />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="enter_reason">Enter Reason </label>
+                        <input type="text" class="form-control" id="enter_reason" placeholder="Enter Extra Quantity" />
+                    </div>
+                    <br />
+                    <button class="btn btn-success" id="set_approver">Send to Approver</button>
+                </div>
+            </div>
+            <div class="col-md-7">
+                <label for="operationTable">Operation Table</label>
+                <table id="operationTable" border="1" class="table table-responsive table-striped">
+                    <tr>
+                        <th></th>
+                        <th width="10%">No </th>
+                        <th width="40%">Name </th>
+                        <th width="15%">SMV</th>
+                        <th width="15%">Total SMV</th>
+                        <th width="20%">Section</th>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="loadMe" tabindex="-1" role="dialog" aria-labelledby="loadMeLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-body text-center">
+                    <div class="loader"></div>
+                    <div clas="loader-txt">
+                        <p>
+                            Please Wait Until The Data is Processing....................<br>
+                            <br><small>
+                                Barcode is genarating Please stay clam and wait while loading...
+                                <br />
+                                SQ Group Insentive Calculation System
+                            </small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</font>
+
+@Scripts.Render("~/bundles/jquery")
+<script type="text/javascript">
+        LoadBusinessUnit();
+        LoadBuyer();
+
+
+        $('#nextButton').on('click',
+            function () {
+                $('#nextButton').show();
+                $('#genarate_Barcode').hide();
+                $('#downloadpdf').hide();
+
+                 var submit = false;
+                if ($('#styleSelect').val() == "0") {
+                    $('#styleSelect').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#buyerSelect').val() == "0") {
+                    $('#buyerSelect').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#selectBU').val() == "0") {
+                    $('#selectBU').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#po_number').val()=="0") {
+                    $('#po_number').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#size').val().length < 1) {
+                    $('#size').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#color').val().length < 1) {
+                    $('#color').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#bundle_quantity').val().length < 1) {
+                    $('#bundle_quantity').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#cut_No').val().length < 1) {
+                    $('#cut_No').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#shade_no').val().length < 1) {
+                    $('#shade_no').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#ProductName').val().length < 1) {
+                    $('#ProductName').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#no_of_bundle').val().length < 1) {
+                    $('#no_of_bundle').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#dateSelect').val().length < 1) {
+                    $('#dateSelect').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if (!Number.isInteger(parseInt($('#bundle_quantity').val()))) {
+                    $('#bundle_quantity').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if (!Number.isInteger(parseInt($('#cut_No').val()))) {
+                    $('#cut_No').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if (!Number.isInteger(parseInt($('#shade_no').val()))) {
+                    $('#shade_no').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if (!Number.isInteger(parseInt($('#no_of_bundle').val()))) {
+                    $('#no_of_bundle').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else {
+                    submit = true;
+                }
+                if (submit == true) {
+                    if (parseInt($('#remaining_to').val()) >= (parseInt($('#no_of_bundle').val()) * parseInt($('#bundle_quantity').val()))) {
+                        swal({
+                            title: 'Please Check the input value again and Genarate!!!',
+                            type: 'success',
+                            closeOnCancel: true
+                        },
+                            function () {
+                                $('#nextButton').hide();
+                                $('#genarate_Barcode').show();
+                            });
+                    } else {
+                        $("#enter_quantity").val((parseInt($('#no_of_bundle').val()) * parseInt($('#bundle_quantity').val())) - parseInt($('#remaining_to').val()));
+                        $('#nextButton').hide();
+                        $('#showReason').show();
+                    }
+                } else {
+                    swal({
+                        title: 'PLEASE ENTER ALL THE FIELD With Valid Data !!',
+                        type: 'error',
+                        closeOnCancel: true
+                    });
+                }
+            });
+        $('#genarate_Barcode').on('click',
+            function () {
+                
+                $('#styleSelect').css({ "border-color": "#d3d3d3" });
+                $('#buyerSelect').css({ "border-color": "#d3d3d3" });
+                $('#selectBU').css({ "border-color": "#d3d3d3" });
+                $('#po_number').css({ "border-color": "#d3d3d3" });
+                $('#size').css({ "border-color": "#d3d3d3" });
+                $('#color').css({ "border-color": "#d3d3d3" });
+                $('#bundle_quantity').css({ "border-color": "#d3d3d3" });
+                $('#cut_No').css({ "border-color": "#d3d3d3" });
+                $('#shade_no').css({ "border-color": "#d3d3d3" });
+                $('#ProductName').css({ "border-color": "#d3d3d3" });
+                $('#no_of_bundle').css({ "border-color": "#d3d3d3" });
+                $('#dateSelect').css({ "border-color": "#d3d3d3" });
+
+                var submit = false;
+                if ($('#styleSelect').val() == "0") {
+                    $('#styleSelect').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#buyerSelect').val() == "0") {
+                    $('#buyerSelect').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#selectBU').val() == "0") {
+                    $('#selectBU').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#po_number').val()=="0") {
+                    $('#po_number').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#size').val().length < 1) {
+                    $('#size').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#color').val().length < 1) {
+                    $('#color').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#bundle_quantity').val().length < 1) {
+                    $('#bundle_quantity').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#cut_No').val().length < 1) {
+                    $('#cut_No').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#shade_no').val().length < 1) {
+                    $('#shade_no').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#ProductName').val().length < 1) {
+                    $('#ProductName').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#no_of_bundle').val().length < 1) {
+                    $('#no_of_bundle').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if ($('#dateSelect').val().length < 1) {
+                    $('#dateSelect').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if (!Number.isInteger(parseInt($('#bundle_quantity').val()))) {
+                    $('#bundle_quantity').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if (!Number.isInteger(parseInt($('#cut_No').val()))) {
+                    $('#cut_No').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if (!Number.isInteger(parseInt($('#shade_no').val()))) {
+                    $('#shade_no').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else if (!Number.isInteger(parseInt($('#no_of_bundle').val()))) {
+                    $('#no_of_bundle').css({ "border-color": "#FF0000" });
+                    submit = false;
+                } else {
+                    submit = true;
+                }
+
+                if (submit == true) {
+                    //$('#loadMe').modal('show');
+                    //$("#loadMe").show({
+                    //  backdrop: "static", //remove ability to close modal with click
+                    //  keyboard: false, //remove option to close with keyboard
+                    //  show: true //Display loader!
+                    //});
+                    swal({
+                      title: 'Be Patience!',
+                      text: 'Wait Until The Barcodes are Genarated',
+                      showCancelButton: false,
+                      showConfirmButton: false
+                    });
+                    GenarateBarcodes();
+              }else {
+                swal({
+                    title: 'PLEASE ENTER ALL THE FIELD With Valid Data !!',
+                    type: 'error',
+                    closeOnCancel: true
+                });
+              }
+            });
+        $('#styleSelect').on('change',
+            function () {
+                $('#nextButton').hide();
+                $('#styleSelect').css({ "border-color": "#d3d3d3" });
+                LoadstyleWiseOperation($('#styleSelect').val());
+                LoadPoByStyle($('#styleSelect').val());
+            });
+        $('#buyerSelect').on('change',
+            function () {
+                var buyerId = $("#buyerSelect").val();
+                LoadStyle(buyerId);
+            });
+        function LoadPoByStyle(StyleId) {
+            $('#po_number').css({ "border-color": "#d3d3d3" });
+            var urlpath = '@Url.Action("LoadPoFromDatabase", "Home")';
+                $.ajax({
+                    url: urlpath,
+                    type: "Post",
+                    data: { StyleID: StyleId },
+                        async: true,
+                        success: function(data) {
+                           $('#po_number').empty();
+                            $('#po_number').append("<option value='0'>--Select PO Number--</option>");
+                            for (var i = 0; i < data.length; i++) {
+                                $("#po_number").append($("<option></option>").val(data[i].PoID)
+                                    .html(data[i].PONumeber));
+                            }
+                        }
+                    });
+        }
+
+        $('#bundle_quantity').on('change',
+            function () {
+                var qnty = $('#bundle_quantity').val();
+                 $("#operationTable tr").each(function () {
+                    var smv = $(this).find('input[name^="smv"]').val();
+                     $(this).find('input[name^="totalsmv"]').val((smv * qnty).toFixed(2));
+                });
+            });
+
+        $('#po_number').on('change',
+            function () {
+                if ($('#po_number').val() == "0") {
+                    $('#nextButton').hide();
+                } else {
+                    LoadPOById($('#po_number').val());
+                    $('#nextButton').show();
+                }
+
+            });
+
+       function LoadstyleWiseOperation(id) {
+            var urlpath = '@Url.Action("LoadStyleWiseOper", "Home")';
+            $.ajax({
+                url: urlpath,
+                dataType: 'json',
+                type: "Post",
+                data: {StyleId:id},
+                async: true,
+                success: function (data) {
+                    //$("#operationTable").find("tr:gt(0)").remove();
+                    $("#operationTable").empty();
+                    var headrow = $("<th></th><th width='10%'>No</th><th width='40%'>Operation Name </th><th width='15%'>SMV</th><th width='15%'>SMV</th><th width='20%'>Operation Section</th>");
+                   $("#operationTable").append(headrow)
+                     for (var i = 0; i < data.length; i++) {
+                         var newRow = $("<tr>");
+                         var cols = "";
+                         cols += '<td><input type="hidden" id="operationId" name="operationId" value="' + data[i].OperationId + '"/></td>';
+                         cols += '<td><p>' + data[i].OperationNumber + '</p></td>';
+                         cols += '<td><input type="text" name="operationname" disabled class="form-control" style="text-align:center" value="'+ data[i].OperationName + '"/></td>';
+                         cols += '<td><input type="text" name="smv" disabled class="form-control" style="text-align:center" value="' + data[i].OperationSMV + '" /></td>';
+                         cols += '<td><input type="text" disabled name="totalsmv" class="form-control" style="text-align:center" value="0" /></td>';
+                         cols += '<td><p>' + data[i].OperationSection + '</p></td>';
+                         newRow.append(cols);
+                        $("#operationTable").append(newRow);
+                    }
+                }
+            });
+        }
+
+        function LoadStyle(buyerId) {
+            $('#styleSelect').css({ "border-color": "#d3d3d3" });
+            var urlpath = '@Url.Action("LoadStyle", "Home")';
+            $.ajax({
+                url: urlpath,
+                dataType: 'json',
+                type: "Post",
+                data: { BuyerId: buyerId },
+                async: true,
+                success: function (data) {
+                    $('#styleSelect').empty();
+                    $('#styleSelect').append("<option value='0'>--Select Style--</option>");
+                    for (var i = 0; i < data.length; i++) {
+                        $("#styleSelect").append($("<option></option>").val(data[i].StyleId)
+                            .html(data[i].StyleName));
+                    }
+                }
+            });
+        }
+
+        function LoadBuyer() {
+            $('#buyerSelect').css({ "border-color": "#d3d3d3" });
+            var urlpath = '@Url.Action("LoadBuyer", "Home")';
+            $.ajax({
+                url: urlpath,
+                dataType: 'json',
+                type: "Post",
+                data: {},
+                async: true,
+                success: function (data) {
+                    $('#buyerSelect').empty();
+                    $('#buyerSelect').append("<option value='0'>--Select Buyer--</option>");
+                    for (var i = 0; i < data.length; i++) {
+                        $("#buyerSelect").append($("<option></option>").val(data[i].BuyerId)
+                            .html(data[i].BuyerName));
+                    }
+                }
+            });
+        }
+
+        function LoadPOById(poidNo) {
+             $('#po_number').css({ "border-color": "#d3d3d3" });
+            var urlpath = '@Url.Action("PoInformationByID", "Home")';
+                $.ajax({
+                    url: urlpath,
+                    type: "Post",
+                    data: { PoID: poidNo },
+                        async: true,
+                    success: function (data) {
+                        $("#purchase_Quantity").val(data.TotalQuantity);
+                        $("#remaining_to").val(data.RemainingQuantity);
+                        $("#alreadyGenarate").val(parseInt(data.TotalQuantity) - parseInt(data.RemainingQuantity));
+                        }
+                    });
+        }
+
+        function LoadBusinessUnit() {
+            $('#selectBU').css({ "border-color": "#d3d3d3" });
+            var urlpath = '@Url.Action("LoadBusinessUnit", "Home")';
+            $.ajax({
+                url: urlpath,
+                dataType: 'json',
+                type: "Post",
+                data: {},
+                async: true,
+                success: function (data) {
+                    $('#selectBU').empty();
+                    $('#selectBU').append("<option value='0'>--Select Business Unit--</option>");
+                    for (var i = 0; i < data.length; i++) {
+                        $("#selectBU").append($("<option></option>").val(data[i].BusinessUnitId)
+                            .html(data[i].BusinessUnitName));
+                    }
+                }
+            });
+        }
+        function GenarateBarcodes() {
+            
+            var jsonData = {};
+            jsonData["StyleName"] = $('#styleSelect').children("option:selected").html();
+            jsonData["StyleID"] = $('#styleSelect').val();
+                jsonData["BuyerID"] = $('#buyerSelect').val();
+                jsonData["BuyerName"] = $('#buyerSelect').children("option:selected").html();
+                jsonData["BusinessUnitId"] = $('#selectBU').val();
+                jsonData["SelectDate"] = formatDate($('#dateSelect').val());
+                jsonData["PONumber"] = $('#po_number').val();
+                jsonData["BundleSize"] = $('#size').val();
+                jsonData["Color"] = $('#color').val();
+                jsonData["Quantity"] = $('#bundle_quantity').val();
+                jsonData["CutNo"] = $('#cut_No').val();
+                jsonData["ShadeNO"] = $('#shade_no').val();
+                jsonData["ProductName"] = $('#ProductName').val();
+            jsonData["NoOfBundle"] = $('#no_of_bundle').val();
+             var jsonObj = [];
+
+                $('#operationTable tr').each(function () {
+                    var myData = {};
+                    myData["OperationId"] = $(this).find('input[name^="operationId"]').val();
+                    myData["OperationSMV"] = $(this).find('input[name^="totalsmv"]').val();
+                    myData["OperationName"] = $(this).find('input[name^="operationname"]').val();
+                    jsonObj.push(myData);
+
+                });
+                jsonData["OprationList"] = jsonObj;
+                var urlpath = '@Url.Action("GenarateBarcodesFromInput", "Home")';
+                $.ajax({
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(jsonData),
+                    dataType: 'json',
+                    url: urlpath,
+                    type: "Post",
+                    async: true,
+                    success: function (result) {
+                        if (result.isSuccess) {
+                            $('#downloadpdf').attr("href", "/Home/DownloadFile?filename=" + result.data);
+                            LoadPoByStyle($('#styleSelect').val());
+                            $('#genarate_Barcode').hide();
+                            //$('#nextButton').show();
+                            $('#downloadpdf').show();
+                            $('#bundle_quantity').val("");
+                            $('#no_of_bundle').val("");
+                            $('#alreadyGenarate').val("");
+                            $('#remaining_to').val("");
+                            swal.close();
+                            
+                            //swal({
+                            //    title: 'Barcodegenarate Successfully',
+                            //    type: 'success',
+                            //    closeOnCancel: true
+                            //},
+                            //    function () {
+
+                            //    });
+                        }
+                    }
+                });
+        }
+        function formatDate(date) {
+                    var d = new Date(date),
+                        month = '' + (d.getMonth() + 1),
+                        day = '' + d.getDate(),
+                        year = d.getFullYear();
+
+                    if (month.length < 2)
+                        month = '0' + month;
+                    if (day.length < 2)
+                        day = '0' + day;
+                    return [year, month, day].join('-');
+        }
+    </script>

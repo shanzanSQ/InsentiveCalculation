@@ -1,1 +1,210 @@
-﻿
+﻿<style>
+    #loadOperationTable {
+        display:block;
+        height: 400px;
+        overflow-y: scroll;
+    }
+    th, td {
+        text-align: center;
+    }
+
+    #loadOperationTable th {
+        position: sticky;
+        top: 0;
+        background: #9bb18b;
+    }
+</style>
+<div style="margin-left:2%;margin-right:5%">
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-3">
+            <label for="selectBuyer">Select Buyer</label>
+            <select class="form-control" id="selectBuyer"></select>
+        </div>
+        <div class="col-md-3">
+            <label for="styleSelect">Select Style</label>
+            <select id="styleSelect" class="form-control"></select>
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-4">
+            <button id="addOperationToStyle" class="btn btn-primary">Add Operations To Style</button>
+        </div>
+        <div class="col-md-4">
+            <button id="showStyleoperation" class="btn btn-success">Show Operations From Style</button>
+        </div>
+        <div class="col-md-4">
+            <button id="clearStyle" class="btn btn-danger">Clear Operations From Style</button>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-12">
+            <table border="1" style="width:100%" id="loadOperationTable" class="table table-striped">
+                <tr id="headerth">
+                    <th width="5%"><input id="checkAll" type="checkbox" value="0" /></th>
+                    <th width="10%">No</th>
+                    <th width="40%">Operation Name</th>
+                    <th width="30%">Section</th>
+                    <th width="15%">Operation SMV </th>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jquery")
+<script type="text/javascript">
+    LoadBuyer();
+    LoadOperationTable(0);
+    $("#selectBuyer").change(function () {
+        LoadStyle($("#selectBuyer").val());
+    });
+
+    function LoadBuyer() {
+        $('#selectBuyer').css({ "border-color": "#d3d3d3" });
+        var urlpath = '@Url.Action("LoadBuyer", "Home")';
+        $.ajax({
+            url: urlpath,
+            dataType: 'json',
+            type: "Post",
+            data: {},
+            async: true,
+            success: function (data) {
+                $('#selectBuyer').empty();
+                $('#selectBuyer').append("<option value='0'>--Select Buyer--</option>");
+                for (var i = 0; i < data.length; i++) {
+                    $("#selectBuyer").append($("<option></option>").val(data[i].BuyerId)
+                        .html(data[i].BuyerName));
+                }
+            }
+        });
+    }
+    function LoadStyle(buyerId) {
+        $('#styleSelect').css({ "border-color": "#d3d3d3" });
+        var urlpath = '@Url.Action("LoadStyle", "Home")';
+        $.ajax({
+            url: urlpath,
+            dataType: 'json',
+            type: "Post",
+            data: { BuyerId: buyerId },
+            async: true,
+            success: function (data) {
+                $('#styleSelect').empty();
+                $('#styleSelect').append("<option value='0'>--Select Style--</option>");
+                for (var i = 0; i < data.length; i++) {
+                    $("#styleSelect").append($("<option></option>").val(data[i].StyleId)
+                        .html(data[i].StyleName));
+                }
+            }
+        });
+    }
+    function LoadOperationTable(no) {
+        var urlpath = '@Url.Action("LoadStyleWiseOper", "Home")';
+        $.ajax({
+            url: urlpath,
+            dataType: 'json',
+            type: "Post",
+            data: {StyleId:no},
+            async: true,
+            success: function (data) {
+                $("#checkAll").prop("checked", false);
+                $("#loadOperationTable").find("tr:gt(0)").remove();
+                for (var i = 0; i < data.length; i++) {
+                     var newRow = $("<tr>");
+                     var cols = "";
+                     cols += '<td><input type="checkbox" name="operationId"  style="text-align:center" value="' + data[i].OperationId + '" /></td>';
+                     cols += '<td><p>'+(i+1)+ '</p></td>';
+                     cols += '<td><p>'+ data[i].OperationName + '</p></td>';
+                     cols += '<td><p>'+ data[i].OperationSection + '</p></td>';
+                     cols += '<td><input type="text" name="operationsmv" class="form-control" style="text-align:center" value="'+data[i].OperationSMV+'" /></td>';
+                     newRow.append(cols);
+                    $("#loadOperationTable").append(newRow);
+                }
+            }
+        });
+    }
+    $("#checkAll").click(function (e) {
+          $(this).closest('table').find('td input:checkbox').prop('checked', this.checked);
+            // $('input:checkbox').not(this).prop('checked', this.checked);
+                // $(this).find('input[name^="operationId"]').not(this).prop('checked', this.checked);
+    });
+    $("#showStyleoperation").click(function (e) {
+        var styleId = $("#styleSelect").val();
+        LoadOperationTable(styleId);
+    });
+    $("#addOperationToStyle").click(function (e) {
+        var jsonData = {};
+        jsonData["StyleID"] = $("#styleSelect").val();
+        var jsonObj = [];
+        $("#loadOperationTable tr").find('input[type="checkbox"]:checked').each(function () {
+            if ($(this).val()!="0") {
+                var myData = {};
+                myData["OperationId"] = $(this).val();
+                myData["OperationSMV"] =$(this).closest("tr").find('input[name^="operationsmv"]').val();
+                jsonObj.push(myData);
+            }  
+        });
+        jsonData["OperationList"] = jsonObj;
+        var urlpath = '@Url.Action("SaveStylewiseOperation", "Home")';
+        $.ajax({
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(jsonData),
+                dataType: 'json',
+                url: urlpath,
+                type: "Post",
+                async: true,
+                success: function (result) {
+                    if (result.isSuccess) {
+                        swal({
+                            title: 'Operations Added To Style Successfully',
+                            type: 'success',
+                            closeOnCancel: true
+                        },
+                            function () {
+                                LoadStyle();
+                                LoadOperationTable(0);
+                            });
+                }
+			}
+        });
+    });
+    $("#clearStyle").click(function (e) {
+        var jsonData = {};
+        jsonData["StyleID"] = $("#styleSelect").val();
+        var jsonObj = [];
+        $("#loadOperationTable tr").find('input[type="checkbox"]:checked').each(function () {
+            if ($(this).val()!="0") {
+                var myData = {};
+                myData["OperationId"] = $(this).val();
+                myData["OperationSMV"] =$(this).closest("tr").find('input[name^="operationsmv"]').val();
+                jsonObj.push(myData);
+            }  
+        });
+        jsonData["OperationList"] = jsonObj;
+        var urlpath = '@Url.Action("DeleteStyleOperation", "Home")';
+        $.ajax({
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(jsonData),
+                dataType: 'json',
+                url: urlpath,
+                type: "Post",
+                async: true,
+                success: function (result) {
+                    if (result.isSuccess) {
+                        swal({
+                            title: 'Operations Delete From Style Successfully',
+                            type: 'success',
+                            closeOnCancel: true
+                        },
+                            function () {
+                                LoadStyle();
+                                LoadOperationTable(0);
+                            });
+                }
+			}
+        });
+    });
+    
+</script>

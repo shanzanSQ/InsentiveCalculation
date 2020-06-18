@@ -2,6 +2,7 @@
 using InsentiveCalculation.Models;
 using SQIndustryThree.Models;
 using System;
+using System.Collections.Generic;
 using System.Web.Mvc;
 
 namespace InsentiveCalculation.Controllers
@@ -14,7 +15,6 @@ namespace InsentiveCalculation.Controllers
         {
             return View();
         }
-
         [HttpPost]
         public ActionResult CheckLogin(string UserEmail, string UserPassword)
         {
@@ -22,19 +22,29 @@ namespace InsentiveCalculation.Controllers
             UserInformation users = accountDAL.CheckUserLogin(UserEmail, UserPassword);
             if (users.Empty)
             {
-
                 result.isSuccess = true;
                 result.msg = "Wrong Username Or Password";
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
             else
             {
-                result.isSuccess = false;
-                result.msg = Url.Action("ReadQRCode", "Home");
-                Session["IncentiveUserId"] = users.UserInformationId;
-                Session["IncentiveUserName"] = users.UserInformationName;
-                Session["IncentiveUserDes"] = users.DesignationId;
-                return Json(result, JsonRequestBehavior.AllowGet);
+
+                List<ModuleClassModel> moduleList = new List<ModuleClassModel>();
+                moduleList = accountDAL.GetModuleByuUser(users.UserInformationId);
+                if (moduleList.Count <= 0)
+                {
+                    result.isSuccess = true;
+                    result.msg = "You Don't Have Permission To This System";
+                    return Json(result, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    result.isSuccess = false;
+                    result.msg = Url.Action(moduleList[0].ModuleValue, moduleList[0].ModuleController);
+                    Session["IncentiveUserId"] = users.UserInformationId;
+                    Session["IncentiveUserName"] = users.UserInformationName;
+                    return Json(result, JsonRequestBehavior.AllowGet);
+                }
             }
 
         }
@@ -47,6 +57,10 @@ namespace InsentiveCalculation.Controllers
 
         public ActionResult ProfileView()
         {
+            if (Session["IncentiveUserId"] == null)
+            {
+                return RedirectToAction("Index", "Account");
+            }
             return View();
         }
         public ActionResult GetUserInformation()
@@ -93,8 +107,18 @@ namespace InsentiveCalculation.Controllers
             }
             return Json(result, JsonRequestBehavior.AllowGet);
         }
+
+        [HttpPost]
+        public ActionResult LoadPermissionMenu()
+        {
+            if (Session["IncentiveUserId"] == null)
+            {
+                return RedirectToAction("Index", "Account");
+            }
+            int userid = Convert.ToInt32(Session["IncentiveUserId"]);
+            List<ModuleClassModel> moduleList = new List<ModuleClassModel>();
+            moduleList = accountDAL.GetModuleByuUser(userid);
+            return Json(moduleList, JsonRequestBehavior.AllowGet);
+        }
     }
-
-
-
 }

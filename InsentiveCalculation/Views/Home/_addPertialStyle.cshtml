@@ -3,40 +3,164 @@
         margin-left: 20px;
     }
 
-    .lable_table {
-        width: 20%;
-        font-weight: bold;
+    #styleTable {
+        width: 70%;
+        margin-left: 15%;
+        margin-right: 15%;
+    }
+
+    table,
+    thead,
+    tr,
+    tbody,
+    th,
+    td {
+        text-align: center;
     }
 </style>
 <div id="total_div" class="container-fluid">
     <div class="row">
-        <table style="text-align:center;align-content:center" class="table table-responsive">
-            <tr>
-                <td class="lable_table">Enter New Style Name : </td>
-                <td><input type="text" id="styleName" class="form-control" placeholder="Enter  New Style Name" /></td>
-                <td><button id="addNewStyle" class="btn btn-primary">Add New Style</button></td>
-            </tr>
-        </table>
+        <div class="col-md-3">
+            <label for="selectBuyer">Select Buyer</label>
+            <select class="form-control" id="selectBuyer"></select>
+        </div>
+        <div class="col-md-3">
+            <label for="selectBuyer">Enter Style Name</label>
+            <input type="text" id="styleName" class="form-control" placeholder="Enter  New Style Name" />
+        </div>
+        <div class="col-md-3">
+            <label for="addNewStyle">Action</label>
+            <button id="addNewStyle" class="btn btn-success form-control">Add New Style</button>
+        </div>
+        <div class="col-md-3">
+            <label for="showstyle">Action</label>
+            <button id="showstyle" class="btn btn-primary form-control">Show Style </button>
+        </div>
     </div>
-    <div id="show_view"></div>
+    <br />
+    <div id="show_view">
+        <div class="row">
+            <table id="styleTable" border="1"  class="table table-striped">
+               
+            </table>
+        </div>
+    </div>
 </div>
 @Scripts.Render("~/bundles/jquery")
-<script>
-    LoadStyle();
-    function LoadStyle() {
-        var urlpath = '@Url.Action("ShowStylesFromDatabase", "Home")';
+<script src="~/Assets/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="~/Assets/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript">
+    LoadBuyer();
+
+    function LoadBuyer() {
+        $('#selectBuyer').css({ "border-color": "#d3d3d3" });
+        var urlpath = '@Url.Action("LoadBuyer", "Home")';
+        $.ajax({
+            url: urlpath,
+            dataType: 'json',
+            type: "Post",
+            data: {},
+            async: true,
+            success: function (data) {
+                $('#selectBuyer').empty();
+                $('#selectBuyer').append("<option value='0'>--Select Buyer--</option>");
+                for (var i = 0; i < data.length; i++) {
+                    $("#selectBuyer").append($("<option></option>").val(data[i].BuyerId)
+                        .html(data[i].BuyerName));
+                }
+            }
+        });
+    }
+
+    $("#addNewStyle").click(function () {
+        if ($("#selectBuyer").val()=="0") {
+             $('#selectBuyer').css({ "border-color": "#FF0000" });
+        }else if ($("#styleName").val().length < 1) {
+             $('#styleName').css({ "border-color": "#FF0000" });
+        }
+        else {
+             AddNewStyle();
+        }
+    });
+
+    $("#showstyle").click(function () {
+        if ($("#selectBuyer").val()=="0") {
+             $('#selectBuyer').css({ "border-color": "#FF0000" });
+        } else {
+            var buyerID = $("#selectBuyer").val();
+            LoadStyle(buyerID);
+        }
+    });
+
+    function LoadStyle(buyerId) {
+        var urlpath = '@Url.Action("LoadStyle", "Home")';
             $.ajax({
                 url: urlpath,
                 type: "Post",
-                data: {},
+                data: {BuyerId: buyerId},
                     async: true,
                     success: function(data) {
-                        if (data) {
-                            $('#show_view').empty();
-                            $('#show_view').html(data);
-                            $("#show_view").DataTable();
+                       $("#styleTable").empty();
+                       var headrow = $("<th></th><th width='10%'>No</th><th width='60%'>Style Name </th><th width='30%'>Action</th>");
+                       $("#styleTable").append(headrow)
+                         for (var i = 0; i < data.length; i++) {
+                             var newRow = $("<tr>");
+                             var cols = "";
+                             cols += '<td><input type="hidden" id="operationId" name="operationId" value="' + data[i].StyleId + '"/></td>';
+                             cols += '<td><p>' + (i+1)+ '</p></td>';
+                             cols += '<td><p>' + data[i].StyleName + '</p></td>';
+                             cols += '<td><button style="margin:2px" class="btn btn-danger" onclick="DeleteStyle(' + data[i].StyleId + ')" > Delete </button></td>';
+                             newRow.append(cols);
+                            $("#styleTable").append(newRow);
                         }
                     }
                 });
+    }
+    function DeleteStyle(styleId) {
+        var urlpath = '@Url.Action("DeleteStyle", "Home")';
+        $.ajax({
+            url: urlpath,
+            type: "Post",
+            data: { StyleID: styleId },
+            async: true,
+            success: function (data) {
+                if (data) {
+                    swal({
+                        title: 'Style Deleted Successfully',
+                        type: 'success',
+                        closeOnCancel: true
+                    },
+                        function () {
+                            var buyerId=$("#selectBuyer").val();
+                            LoadStyle(buyerId);
+                        });
+                }
+            }
+        });
+    }
+    function AddNewStyle() {
+        $('#styleName').css({ "border-color": "#d3d3d3" });
+        var name = $("#styleName").val();
+        var buyerID = $("#selectBuyer").val();
+            var urlpath = '@Url.Action("AddStyletOdatabase", "Home")';
+            $.ajax({
+                url: urlpath,
+                dataType: 'json',
+                type: "Post",
+                data: { StyleName: name, BuyerId: buyerID },
+                async: true,
+                success: function (data) {
+                    if (data) {
+                         swal({
+                                title: 'Style Added Successfully',
+                                type: 'success',
+                                closeOnCancel: true
+                            },
+                             function () {
+                                 LoadStyle(buyerID);
+                                });
+                    }
+                }
+            });
     }
 </script>

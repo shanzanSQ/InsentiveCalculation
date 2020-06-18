@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
-namespace SQIndustryThree.DataManager
+namespace InsentiveCalculation.DataManager
 {
     
         public class DataBase
@@ -12,3 +10,4 @@ namespace SQIndustryThree.DataManager
             public static string WorkerInsentive = @"WorkerIncentive";//name of database
         }
 }
+

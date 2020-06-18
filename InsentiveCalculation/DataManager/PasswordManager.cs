@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 
-namespace SQIndustryThree.DataManager
+namespace InsentiveCalculation.DataManager
 {
     public class PasswordManager
     {

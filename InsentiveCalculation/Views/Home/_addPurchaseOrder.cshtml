@@ -1,0 +1,198 @@
+﻿<style>
+    #total_div {
+        margin-left: 20px;
+    }
+
+    #styleTable {
+        width: 70%;
+        margin-left: 15%;
+        margin-right: 15%;
+    }
+
+    table,
+    thead,
+    tr,
+    tbody,
+    th,
+    td {
+        text-align: center;
+    }
+</style>
+<div id="total_div" class="container-fluid">
+    <div class="row">
+        <div class="col-md-4">
+            <label for="buyerSelect">Select Buyer</label>
+            <select id="buyerSelect" class="form-control"></select>
+        </div>
+        <div class="col-md-4">
+            <label for="selectStyle">Select Style</label>
+            <select id="selectStyle" class="form-control"></select>
+        </div>
+        <div class="col-md-4">
+            <label for="poNumber">Enter PO Number</label>
+            <input type="text" id="poNumber" class="form-control" placeholder="Enter  New PO Number" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <label for="productionNumber">PO Qty</label>
+            <input type="text" id="productionNumber" class="form-control" placeholder="Enter PO Quantity  " />
+        </div>
+        <div class="col-md-4">
+            <label for="maximumeffi">Enter Tolerance </label>
+            <input type="text" disabled id="maximumeffi" class="form-control" value="3" placeholder="Enter Tolerance in Percentage " />
+        </div>
+        <br />
+        <button class="btn btn-success" id="addnewPo">Add PO TO STYLE</button>
+        <button class="btn btn-info" id="showPo">Show PO Details </button>
+    </div>
+    @*<div class="row">
+        <br />
+        
+    </div>*@
+    <div id="poview">
+        <div class="row">
+            <br />
+            <table id="potable" border="1" style="text-align:center;" class="table table-responsive">
+            </table>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jquery")
+<script src="~/Assets/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="~/Assets/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript">
+    LoadBuyer();
+
+
+    $("#addnewPo").click(function () {
+        if ($("#selectStyle").val()=='0') {
+            $('#selectStyle').css({ "border-color": "#FF0000" });
+        } else if ($("#poNumber").val().length<1){
+            $('#poNumber').css({ "border-color": "#FF0000" });
+        }else if ($("#productionNumber").val().length<1  || !Number.isInteger(parseInt($('#productionNumber').val()))) {
+             $('#productionNumber').css({ "border-color": "#FF0000" });
+        }else if ($("#maximumeffi").val().length<1 || !Number.isInteger(parseInt($('#maximumeffi').val()))) {
+             $('#maximumeffi').css({ "border-color": "#FF0000" });
+        }else {
+            AddNewPO();
+        }
+    });
+
+    $("#buyerSelect").change(function () {
+        LoadStyle($('#buyerSelect').val());
+    });
+    $("#poNumber").change(function () {
+         $('#poNumber').css({ "border-color": "#d3d3d3" });
+    });
+     $("#productionNumber").change(function () {
+         $('#productionNumber').css({ "border-color": "#d3d3d3" });
+     });
+     $("#maximumeffi").change(function () {
+         $('#maximumeffi').css({ "border-color": "#d3d3d3" });
+     });
+     $("#selectStyle").change(function () {
+         $('#selectStyle').css({ "border-color": "#d3d3d3" });
+     });
+     $("#showPo").click(function () {
+        if ($("#selectStyle").val() == '0') {
+            $('#selectStyle').css({ "border-color": "#FF0000" });
+        } else {
+            var styleId = $("#selectStyle").val();
+            LoadPoByStyle(styleId);
+        }
+    });
+
+     function LoadBuyer() {
+        $('#buyerSelect').css({ "border-color": "#d3d3d3" });
+        var urlpath = '@Url.Action("LoadBuyer", "Home")';
+        $.ajax({
+            url: urlpath,
+            dataType: 'json',
+            type: "Post",
+            data: {},
+            async: true,
+            success: function (data) {
+                $('#buyerSelect').empty();
+                $('#buyerSelect').append("<option value='0'>--Select Buyer--</option>");
+                for (var i = 0; i < data.length; i++) {
+                    $("#buyerSelect").append($("<option></option>").val(data[i].BuyerId)
+                        .html(data[i].BuyerName));
+                }
+            }
+        });
+    }
+
+    function LoadStyle(buyerId) {
+        $('#selectStyle').css({ "border-color": "#d3d3d3" });
+        var urlpath = '@Url.Action("LoadStyle", "Home")';
+            $.ajax({
+                url: urlpath,
+                type: "Post",
+                data: {BuyerId:buyerId},
+                    async: true,
+                    success: function(data) {
+                       $('#selectStyle').empty();
+                        $('#selectStyle').append("<option value='0'>--Select Style--</option>");
+                        for (var i = 0; i < data.length; i++) {
+                            $("#selectStyle").append($("<option></option>").val(data[i].StyleId)
+                                .html(data[i].StyleName));
+                        }
+                    }
+                });
+    }
+    function LoadPoByStyle(StyleId) {
+        var urlpath = '@Url.Action("LoadPoFromDatabase", "Home")';
+            $.ajax({
+                url: urlpath,
+                type: "Post",
+                data: { StyleID: StyleId },
+                    async: true,
+                    success: function(data) {
+                        $("#potable").empty();
+                        var headrow = $("<th width='10%'>No</th><th width = '35%' > PO Number </th ><th width='15%'>PO Quantity </th><th width='10%'>Percentage</th><th width='15%'>Total Quantity</th><th width='15%'>Remaining Quantity</th>");
+                       $("#potable").append(headrow)
+                         for (var i = 0; i < data.length; i++) {
+                             var newRow = $("<tr>");
+                             var cols = "";
+                             cols += '<td>' + (i+1) + '</td>';
+                             cols += '<td>' + data[i].PONumeber + '</td>';
+                             cols += '<td>' + data[i].POQuantity + '</td>';
+                             cols += '<td>' + data[i].PoPercentage + '%</td>';
+                             cols += '<td>' + data[i].TotalQuantity + '</td>';
+                             cols += '<td>' + data[i].RemainingQuantity + '</td></tr>';
+                             newRow.append(cols);
+                            $("#potable").append(newRow);
+                        }
+                    }
+                });
+    }
+
+
+
+    function AddNewPO() {
+
+        var styleId = $("#selectStyle").val();
+        var poNumber = $("#poNumber").val();
+        var numberofProductions = $("#productionNumber").val();
+        var maxim = $("#maximumeffi").val();
+
+            var urlpath = '@Url.Action("AddPoToDatabase", "Home")';
+            $.ajax({
+                url: urlpath,
+                dataType: 'json',
+                type: "Post",
+                data: { PoNumber: poNumber,StyleId:styleId,numberProduction:numberofProductions,maxNumber:maxim},
+                async: true,
+                success: function (data) {
+                    if (data) {
+                        swal({
+                            title: 'PO Added Successfully',
+                            type: 'success',
+                            closeOnCancel: true
+                        });
+                    }
+                }
+            });
+    }
+</script>

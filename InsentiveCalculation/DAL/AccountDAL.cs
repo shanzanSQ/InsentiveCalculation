@@ -1,4 +1,6 @@
-﻿using SQIndustryThree.DataManager;
+﻿
+using InsentiveCalculation.DataManager;
+using InsentiveCalculation.Models;
 using SQIndustryThree.Models;
 using System;
 using System.Collections.Generic;
@@ -122,11 +124,11 @@ namespace InsentiveCalculation.DAL
                         System.Net.Mail.SmtpClient smtp = new SmtpClient();
                         message.From = new MailAddress("noreply@sqgc.com");
                         message.To.Add(new MailAddress(email));
-                        message.Subject = "AMS Password Recovery";
+                        message.Subject = "Insentive Password Recovery";
                         message.IsBodyHtml = true; //to make message body as html  
-                        message.Body = "Dear Mr." + name + "<br/> You requested for Recover your password <br/> Your Password for the Approval management system is : " + PasswordManager.Decrypt(password) + " <br/>" +
+                        message.Body = "Dear Mr." + name + "<br/> You requested for Recover your password <br/> Your Password for the Insentive Calculation system is : " + PasswordManager.Decrypt(password) + " <br/>" +
                             "Thank you For Being with Us <br/>" +
-                            "<br/>Thank You<br/> Approval Management System<br/>SQ Group<br/>sqgc.com";
+                            "<br/>Thank You<br/> Insentive Calculation System<br/>SQ Group<br/>sqgc.com";
                         smtp.Port = 587;
                         smtp.Host = "smtp.office365.com"; //for gmail host  
                         smtp.EnableSsl = true;
@@ -172,6 +174,38 @@ namespace InsentiveCalculation.DAL
             {
                 accessManager.SqlConnectionClose(true);
                 throw;
+            }
+            finally
+            {
+                accessManager.SqlConnectionClose();
+            }
+        }
+
+        public List<ModuleClassModel> GetModuleByuUser(int userId)
+        {
+            List<ModuleClassModel> module = new List<ModuleClassModel>();
+            try
+            {
+                accessManager.SqlConnectionOpen(DataBase.WorkerInsentive);
+                List<SqlParameter> aParameters = new List<SqlParameter>();
+                aParameters.Add(new SqlParameter("@userId", userId));
+                SqlDataReader dr = accessManager.GetSqlDataReader("sp_ModulePermissionByUser", aParameters);
+                while (dr.Read())
+                {
+                    ModuleClassModel moduleClass = new ModuleClassModel();
+                    moduleClass.ModuleKey = (int)dr["Modulekey"];
+                    moduleClass.ModuleName = dr["ModuleName"].ToString();
+                    moduleClass.ModuleValue = dr["ModuleValue"].ToString();
+                    moduleClass.ModuleController = dr["ModuleController"].ToString();
+                    module.Add(moduleClass);
+                }
+
+                return module;
+            }
+            catch (Exception e)
+            {
+                accessManager.SqlConnectionClose(true);
+                throw e;
             }
             finally
             {

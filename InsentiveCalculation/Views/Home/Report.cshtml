@@ -1,0 +1,117 @@
+﻿<style type="text/css">
+    .form-control, .btn {
+        border-radius: 0px;
+    }
+</style>
+<font size="2">
+    <div class="container-fluid">
+        <h1 style="text-align:center">Daily Report</h1>
+        <div class="row">
+            <div class="col-md-2">
+                <label for="selectBU">Select Business Unit</label>
+                <select id="selectBU" class="form-control">
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="selectionDate">Select Date</label>
+                <input type="date" class="form-control" id="selectionDate" />
+            </div>
+            <div class="col-md-2">
+                <label for="submitDate">Action</label>
+                <input type="button" class="btn btn-sm btn-primary form-control" id="submitDate" value="Search" />
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-default" id="ReportDashboard"> </div>
+            </div>
+        </div>
+    </div>
+</font>
+@Scripts.Render("~/bundles/jquery")
+<script type="text/javascript">
+    $('#submitDate').click(function () {
+        if ($("#selectBU").val() == "0") {
+            swal({
+                    title: 'Please Select The Business Unit First',
+                    type: 'error',
+                    closeOnCancel: true
+                });
+        } else {
+            ReportSearch();
+        }
+    });
+    LoadBusinessUnit();
+    function LoadBusinessUnit() {
+        $('#selectBU').css({ "border-color": "#d3d3d3" });
+        var urlpath = '@Url.Action("LoadBusinessUnit", "Home")';
+        $.ajax({
+            url: urlpath,
+            dataType: 'json',
+            type: "Post",
+            data: {},
+            async: true,
+            success: function (data) {
+                $('#selectBU').empty();
+                $('#selectBU').append("<option value='0'>--Select Business Unit--</option>");
+                for (var i = 0; i < data.length; i++) {
+                    $("#selectBU").append($("<option></option>").val(data[i].BusinessUnitId)
+                        .html(data[i].BusinessUnitName));
+                }
+            }
+        });
+    }
+
+    function ReportSearch() {
+        var selectDate = $("#selectionDate").val();
+        var businessUnit=$("#selectBU").val();
+        var urlpath = '@Url.Action("SearchReportAll", "Home")';
+        $.ajax({
+        url: urlpath,
+            type: "Post",
+            data: { Workdate: selectDate,BusinessUnitId: businessUnit },
+        async: true,
+        success: function (data) {
+            if (data) {
+                $('#ReportDashboard').empty();
+                $('#ReportDashboard').html(data);
+                $("#reportTable").DataTable(
+                    {
+                        dom: 'lBfrtip',
+                           buttons: [
+                            'excel', 'csv', 'pdf','print'
+                           ],
+                           "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ]
+                    } 
+                );
+            }
+        }
+    });
+    }
+
+    function AddNewEmployeeToFile(fileid, fileIdtext) {
+        var employeeCode = $(fileIdtext).val();
+        var urlpath = '@Url.Action("AddNewWorkerId", "Home")';
+        $.ajax({
+        url: urlpath,
+        type: "Post",
+        data: {
+                FileId:fileid,
+                EmployeeId: employeeCode 
+            },
+        async: true,
+        success: function (data) {
+            if (data) {
+                swal({
+                    title: 'Employee Code Add Successfully',
+                    type: 'success',
+                    closeOnCancel: true
+                }, function () {
+                        ReportSearch();
+                });
+            }
+        }
+    });
+    }
+</script>

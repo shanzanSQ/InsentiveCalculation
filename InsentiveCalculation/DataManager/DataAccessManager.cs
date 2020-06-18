@@ -5,7 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 
-namespace SQIndustryThree.DataManager
+namespace InsentiveCalculation.DataManager
 {
     public class DataAccessManager
     {

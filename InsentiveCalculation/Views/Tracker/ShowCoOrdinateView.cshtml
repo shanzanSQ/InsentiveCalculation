@@ -1,0 +1,164 @@
+﻿
+@{
+    ViewBag.Title = "ShowCoOrdinateView";
+    Layout = "~/Views/Shared/_TrackerLayout.cshtml";
+}
+<style>
+     #comment{
+        overflow-y: auto;
+        height: 150px;
+        border:1px solid white;
+        padding:2px;
+        margin:2px;
+        border-radius:10px;
+    }
+</style>
+<div class="container-fluid">
+    <h2 style="text-align:center;"><b>Coordinator View</b></h2>
+    <hr />
+    <div class="row">
+        <div class="sidebar" style="width:15%;float:left">
+            <ul class="nav">
+                <li><a href="#" id="openshow">Open Request <span style="color:red;">(3)</span></a></li>
+                <li><a href="#" id="openshow">Request On Progress </a></li>
+                <li><a href="#" id="openshow">All Request So Far</a></li>
+            </ul>
+        </div>
+        <div style="text-align:center;width:85%;float:right">
+            <div id="showtracker">
+
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h5 class="modal-title" id="myModalLabel">Request Information</h5>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 modal_body_map" style="margin:5px">
+                        <table border="1" class="table table-striped">
+                            <tr>
+                                <th width="20%">Request ID </th>
+                                <td>100021</td>
+                            </tr>
+                            <tr>
+                                <th>Requester Name </th>
+                                <td>Faisal</td>
+                            </tr>
+                            <tr>
+                                <th>Business Unit</th>
+                                <td>Celsius</td>
+                            </tr>
+                            <tr>
+                                <th>Buyer Name </th>
+                                <td>H & M </td>
+                            </tr>
+                            <tr>
+                                <th>Date </th>
+                                <td>15-01-2020 12:10 PM </td>
+                            </tr>
+                            <tr>
+                                <th>Instruction </th>
+                                <td>costing sheet is attached please fill WFX cost sheet</td>
+                            </tr>
+                            <tr>
+                                <th>Process </th>
+                                <td>Style Creation (Tech Pack) </td>
+                            </tr>
+                            <tr>
+                                <th>Priority</th>
+                                <td>High</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="row" style="margin:auto">
+                        <p><strong>Attached files</strong></p>
+                        <table style="padding:10px" width="100%" border="1" class="table table-responsive">
+                            <tr>
+                                <th>SL</th>
+                                <th>Attached File</th>
+                                <th>Comment Section</th>
+                            </tr>
+                            <tr>
+                                <td>1</td>
+                                <td><a href="#">Firstfile.xlsx</a></td>
+                                <td>This is excel file for Po</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><a href="#">secondfile.pdf</a></td>
+                                <td>all are dummy data</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><a href="#">thirdfile.xlsx</a></td>
+                                <td>This is excel file for Po</td>
+                            </tr>
+                        </table>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-8" style="background:#F2F3F4;border-radius:5px;padding-bottom:5px">
+                        <p><strong>Comment Section</strong></p>
+                        <div id="comment">
+                            <hr style="margin:unset;padding:unset;" />
+                            <p style="margin:unset;padding:unset" class="media-heading user_name"><strong style="color:blue">Mr. Data Entry</strong>15-01-2020 At 12.30 PM</p>
+                            <p style="margin:unset;padding:unset">I can not understand the file xyz </p>
+                            <hr style="margin:unset;padding:unset;" />
+                            <p style="margin:unset;padding:unset" class="media-heading user_name"><strong style="color:blue">Mr. Coodinator</strong>15-01-2020 At 12.20 PM</p>
+                            <p style="margin:unset;padding:unset">I can not understand the file xyz </p>
+                            <hr style="margin:unset;padding:unset;" />
+                            <p style="margin:unset;padding:unset" class="media-heading user_name"><strong style="color:blue">Mr. Faisal</strong> 15-01-2020 At 12.30 PM</p>
+                            <p style="margin:unset;padding:unset">Hello please let me know if you have any issue </p>
+                        </div>
+                        <table width="100%">
+                            <tr>
+                                <td><input type="text" class="form-control" /></td>
+                                <td><input type="button" class="btn btn-primary" value="Send review" /></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="">Assign To </label>
+                        <select class="form-control">
+                            <option>Alvee Siddika</option>
+                            <option>Taslima Nazneen</option>
+                        </select>
+                        <br />
+                        <input type="button"  data-dismiss="modal" class=" btn btn-success form-control"  value="Submit" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" style="text-align:center">
+                
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script type="text/javascript">
+        getAllPendingCapex();
+    function getAllPendingCapex() {
+            var urlpath = '@Url.Action("ShowPartialView", "Tracker")';
+            $.ajax({
+                url: urlpath,
+                type: "Post",
+                data: {},
+                    async: true,
+                    success: function(data) {
+                        if (data) {
+                            $('#showtracker').empty();
+                            $('#showtracker').html(data);
+                            $("#showtrackerTable").DataTable();
+                        }
+                    }
+                });
+        }
+    </script>
+}

@@ -1,60 +1,54 @@
 ﻿
 @{
     Layout = null;
-    ViewBag.Title ="Insentive Login";
+    ViewBag.Title = "Insentive Login";
 }
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <title>Incentive Login</title>
-    <meta charset="UTF-8">
+    <title> SQ GROUP</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!--===============================================================================================-->
-    <link rel="icon" type="image/png" href="image/favicon.ico" />
-    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="keywords" content=" Master  Login Form Widget Tab Form,Login Forms,Sign up Forms,Registration Forms,News letter Forms,Elements" />
+    <script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
     <link href="~/Content/style.css" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" type="text/css" />
     <link href="~/Content/sweetalert.css" rel="stylesheet" />
-    @Styles.Render("~/Content/bootstrap.min.css")
-    @Scripts.Render("~/bundles/modernizr")
+    <link href="//fonts.googleapis.com/css?family=Cormorant+SC:300,400,500,600,700" rel="stylesheet">
+    <link href="//fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i,800,800i" rel="stylesheet">
 </head>
+
 <body>
-    <div class="main_body">
-        <div class="section_left">
-            <div class="firstlogodiv">
-                <div class="logo">
-                    <a href="http://sqgc.com/"><img width="100" src="@Url.Content("~/image/logo.png")" /></a>
-                </div>
-                <div class="slogan">
-                    <p align="center">
-                        <img width="140" src="@Url.Content("~/image/slogan.png")" />
-                    </p>
-                </div>
-                <br />
-                <h1 id="top_header">Incentive Calculation System</h1>
-            </div>
-        </div>
-        <div class="section_right">
-            <div class="signin_form">
-                <h1 style="text-align:center;font-weight:bold;font-size:30px">Please Sign In</h1>
-                <hr />
-                <label for="user_email">Enter Your Email</label>
-                <input class="form-control" id="user_email" type="text" placeholder="Enter Your User Email" required />
-                <label for="user_password">Enter Your Password</label>
-                <input class="form-control" id="user_password" type="password" placeholder="Enter Your Password here " required />
-                <br />
-                <button class="btn btn-primary" id="signin_button" style="width:100%">Sign In</button>
-            </div>
-        </div>
-        <div style="text-align:center" class="footer">
-            <p> copyright  version of <a href="https://www.sqgc.com/"> SQ Group</a></p>
-        </div>
+    <div class="logo">
+        <a href="http://sqgc.com/"><img width="100" src="@Url.Content("~/images/logo.png")" /></a>
     </div>
-    @Scripts.Render("~/bundles/jquery")
-    <script src="~/Scripts/jquery-3.3.1.min.js"></script>
-    <script src="~/Scripts/bootstrap.min.js"></script>
-    <script src="~/Scripts/jquery.validate.min.js"></script>
-    <script src="~/Scripts/sweetalert.min.js"></script>
-    <script type="text/javascript">
+    <div class="slogan">
+        <p align="center">
+            <img width="140" src="@Url.Content("~/images/slogan.png")" />
+        </p>
+    </div>
+    <h1 style="color:#9bb18d;"><strong>Production Monitoring System</strong></h1>
+
+    <div class="design-w3l">
+        <div class="mail-form-agile">
+            <input type="text" name="name" id="user_email" placeholder="User Name  or  email..." required="" />
+            <input type="password" name="password" id="user_password" class="padding" placeholder="Password" required="" />
+            <input type="submit" class="btn btn-success" id="login_button" value="login">
+        </div>
+        <div class="clear"> </div>
+    </div>
+
+    <div style="margin-bottom:30px" class="footer">
+        <p style="color:black"><strong>copyright  version of <a style="color:black" href="https://www.sqgc.com/"> SQ Group 2020 </a></strong> </p>
+    </div>
+</body>
+</html>
+@Scripts.Render("~/bundles/jquery")
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+<script src="~/Scripts/bootstrap.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/sweetalert.min.js"></script>
+<script type="text/javascript">
 
     $(document).keypress(function(e) {
         if (e.keyCode == 13) {
@@ -64,7 +58,7 @@
         }
     });
 
-    $("#signin_button").click(function () {
+    $("#login_button").click(function () {
         var name = $("#user_email").val();
         var pass = $("#user_password").val();
         checkLogin(name, pass);
@@ -103,7 +97,4 @@
             }
         });
     }
-    </script>
-
-</body>
-</html>
+</script>

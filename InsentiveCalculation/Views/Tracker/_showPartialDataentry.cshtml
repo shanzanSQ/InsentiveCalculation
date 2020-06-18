@@ -1,0 +1,75 @@
+﻿@{
+    ViewBag.Title = "_showPartialDataentry";
+}
+<style>
+    th {
+        text-align: center;
+    }
+
+    td {
+        text-align: center;
+    }
+</style>
+<div class="box">
+    <!-- /.box-header -->
+    <div class="box-body">
+        <div class="col-xs-12" id="personlocdiv">
+            <table id="showtrackerTable" class="table-bordered table table-responsive">
+                <thead>
+                    <tr>
+                        <th>SL</th>
+                        <th>Request Id</th>
+                        <th>Requester Name</th>
+                        <th>Business Unit</th>
+                        <th>Buyer</th>
+                        <th>Started At</th>
+                        <th>Process</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <th>100021</th>
+                        <th>Faisal</th>
+                        <th>Celsius</th>
+                        <th>H & M</th>
+                        <th>High</th>
+                        <th>BOM</th>
+                        <th>Processing</th>
+                        <th><input type="button" data-toggle="modal" data-target="#myModal" " id="show_details" class="btn btn-info" value="Show" /></th>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <th>100024</th>
+                        <th>Jenia Sultana</th>
+                        <th>Birichina</th>
+                        <th>M & S</th>
+                        <th>High</th>
+                        <th>Costing</th>
+                        <th>Pending</th>
+                        <th><input type="button" data-toggle="modal" data-target="#myModal" id="show_details" class="btn btn-info" value="Show" /></th>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <th>100023</th>
+                        <th>Rahim</th>
+                        <th>Celsius</th>
+                        <th>M & S</th>
+                        <th>Default</th>
+                        <th>Sales Contract</th>
+                        <th>Pending</th>
+                        <th><input type="button" data-toggle="modal" data-target="#myModal" id="show_details" class="btn btn-info" value="Show" /></th>
+                    </tr>
+                </tbody>
+
+            </table>
+        </div>
+    </div>
+    <!-- /.box-body -->
+</div>
+<!-- /.box -->
+<script src="~/Assets/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="~/Assets/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+

@@ -1,0 +1,236 @@
+﻿
+@{
+    ViewBag.Title = "CreateTracker";
+    Layout = "~/Views/Shared/_TrackerLayout.cshtml";
+}
+<style>
+    td,th{
+        text-align:center;
+    }
+    td>input{
+        margin:2px;
+        text-align:center;
+    }
+    #comment{
+        overflow-y: auto;
+        height: 200px;
+        border:1px solid white;
+        padding:2px;
+        border-radius:10px;
+    }
+</style>
+<div class="main_area">
+    <h2 style="text-align: center">Merchandiser View</h2>
+    <button id="addnew" class="btn btn-primary">Add New </button>
+    <button id="addnew" class="btn btn-success">Existing Request </button>
+    <div style="margin:20px;padding:5px;border-radius:10px">
+        <div class="row">
+            <div class="col-md-3">
+                <label>Request ID</label>
+                <input type="text" id="requestId" class="form-control" disabled value="0" />
+            </div>
+            <div class="col-md-3">
+                <label for="current_date">Current Date</label>
+                <input disabled type="text" id="current_date" class="form-control">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <label>Request For</label>
+                <select id="requestFor" class="form-control">
+                    <option value="1">Style Creation (Tech Pack)</option>
+                    <option value="2">Sales Contract</option>
+                    <option value="3">Costing</option>
+                    <option value="4">OC</option>
+                    <option value="5">BOM</option>
+                    <option value="6">RMPO</option>
+                    <option value="7">Supplier PI</option>
+                    <option value="8">APR</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="business_unit">Business Unit</label>
+                <select class="form-control" id="business_unit">
+                    <option value="1">Celsius </option>
+                    <option value="2">Birichina</option>
+                    <option value="3">ColBlanc</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="buyer">Buyer</label>
+                <select class="form-control" id="buyer"></select>
+            </div>
+            <div class="col-md-3">
+                <label>Priority</label>
+                <select id="priority" class="form-control">
+                    <option>High </option>
+                    <option>Default </option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <label for="instructions">Instructions</label>
+                <textarea style="resize:none;height:50px" type="text" id="instructions" placeholder="Description" class="form-control"></textarea>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <p><strong>Document Attachment Section</strong></p>
+                <table>
+                    <tr>
+                        <th width="40%"><label>Attached Document</label></th>
+                        <th width="50%"><label>Remarks</label></th>
+                        <th width="10%"><input type="button" class="btn btn-success" value="+" /></th>
+                    </tr>
+                    <tr>
+                        <td><input accept="image/jpeg,image/png,application/pdf" name="file_uploaded[]" type="file" multiple class="filestyles gallery-images form-control " id="file_uploaded" /></td>
+                        <td><input type="text" class="form-control" /></td>
+                        <td><input type="button" class="btn btn-danger" value="X" /></td>
+                    </tr>
+                    <tr>
+                        <td><input accept="image/jpeg,image/png,application/pdf" name="file_uploaded[]" type="file" multiple class="filestyles gallery-images form-control " id="file_uploaded" /></td>
+                        <td><input type="text" class="form-control" /></td>
+                        <td><input type="button" class="btn btn-danger" value="X" /></td>
+                    </tr>
+                    <tr>
+                        <td><input accept="image/jpeg,image/png,application/pdf" name="file_uploaded[]" type="file" multiple class="filestyles gallery-images form-control " id="file_uploaded" /></td>
+                        <td><input type="text" class="form-control" /></td>
+                        <td><input type="button" class="btn btn-danger" value="X" /></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <p><strong>Comment Section</strong></p>
+                <div id="comment">
+                    <hr style="margin:unset;padding:unset;" />
+                    <p style="margin:unset;padding:unset" class="media-heading user_name"><strong style="color:blue">Mr. Faisal</strong> 15-01-2020 At 12.30 PM</p>
+                    <p style="margin:unset;padding:unset">Hello please let me know if you have any issue </p>
+                    <hr style="margin:unset;padding:unset;" />
+                    <p style="margin:unset;padding:unset" class="media-heading user_name"><strong style="color:blue">Mr. Coordinator</strong>15-01-2020 At 12.10 PM</p>
+                    <p style="margin:unset;padding:unset">I can not understand the file xyz </p>
+                </div>
+                <table width="100%">
+                    <tr>
+                        <td><input type="text" class="form-control" /></td>
+                        <td><input type="button" class="btn btn-primary" value="Send review" /></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="container" style="text-align:center">
+            <br />
+            <input type="button" class="btn btn-success" id="submitvalue" value="Submit" />
+            <input type="button" class="btn btn-danger" value="Closed" />
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jquery")
+<script type="text/javascript">
+    //    var h3 = document.getElementsByTagName('h3')[0],
+    //    seconds = 0, minutes = 0, hours = 0,
+    //    t;
+    $("#submitvalue").click(function () {
+        SaveDataAsMerchandise();
+    });
+    GetDate();
+
+    //function add() {
+    //    seconds++;
+    //    if (seconds >= 60) {
+    //        seconds = 0;
+    //        minutes++;
+    //        if (minutes >= 60) {
+    //            minutes = 0;
+    //            hours++;
+    //        }
+    //    }
+    //    h3.textContent = (hours ? (hours > 9 ? hours : "0" + hours) : "00") + ":" + (minutes ? (minutes > 9 ? minutes : "0" + minutes) : "00") + ":" + (seconds > 9 ? seconds : "0" + seconds);
+    //    timer();
+    //}
+    //function timer() {
+    //    t = setTimeout(add, 1000);
+    //}
+    //timer();
+    function GetDate() {
+        var dt = new Date();
+        var dd;
+        var mm;
+
+        dd = dt.getDate();
+        mm = dt.getMonth() + 1;
+        document.getElementById('current_date').value = dt.getDate() + "-" + dt.getMonth() + 1 + "-" + dt.getFullYear();
+
+    }
+
+   // LoadBusinessUnit();
+    LoadBuyer();
+
+    function SaveDataAsMerchandise() {
+         var jsonData = {};
+         jsonData["RequestId"] = $('#requestId').val();
+         jsonData["RequestFor"] = $('#requestFor').val();
+         jsonData["BusinessUnitId"] = $('#business_unit').val();
+         jsonData["BuyerId"] = $('#buyer').val();
+         jsonData["Priority"] = $('#priority').val();
+         jsonData["Instructions"] = $('#instructions').val();
+        var urlpath = '@Url.Action("SubmitValueToMerchandise", "Tracker")';
+       $.ajax({
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(jsonData),
+                dataType: 'json',
+                url: urlpath,
+                type: "Post",
+                async: true,
+                success: function (data) {
+                    swal({
+                                title: 'Request Successfully Added',
+                                type: 'success',
+                                closeOnCancel: true
+                            },
+                                function () {
+                                    $('#requestId').val(data);
+                                });  
+                }
+        });
+    }
+
+     @*function LoadBusinessUnit() {
+        $('#business_unit').css({ "border-color": "#d3d3d3" });
+        var urlpath = '@Url.Action("LoadBusinessUnit", "Tracker")';
+        $.ajax({
+            url: urlpath,
+            dataType: 'json',
+            type: "Post",
+            data: {},
+            async: true,
+            success: function (data) {
+                $('#business_unit').empty();
+                $('#business_unit').append("<option value='0'>--Select Business Unit--</option>");
+                for (var i = 0; i < data.length; i++) {
+                    $("#business_unit").append($("<option></option>").val(data[i].BusinessUnitId)
+                        .html(data[i].BusinessUnitName));
+                }
+            }
+        });
+    }*@
+     function LoadBuyer() {
+        $('#buyer').css({ "border-color": "#d3d3d3" });
+        var urlpath = '@Url.Action("LoadBuyer", "Tracker")';
+        $.ajax({
+            url: urlpath,
+            dataType: 'json',
+            type: "Post",
+            data: {},
+            async: true,
+            success: function (data) {
+                $('#buyer').empty();
+                $('#buyer').append("<option value='0'>--Select Buyer--</option>");
+                for (var i = 0; i < data.length; i++) {
+                    $("#buyer").append($("<option></option>").val(data[i].BuyerId)
+                        .html(data[i].BuyerName));
+                }
+            }
+        });
+    }
+</script>
