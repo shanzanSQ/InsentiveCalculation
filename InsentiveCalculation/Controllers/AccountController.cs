@@ -15,6 +15,10 @@ namespace InsentiveCalculation.Controllers
         {
             return View();
         }
+        public ActionResult TestView()
+        {
+            return View();
+        }
         [HttpPost]
         public ActionResult CheckLogin(string UserEmail, string UserPassword)
         {

@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewBag.Title = "TestView";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .form-contro{
+        font-size:80%;
+
+    }
+</style>
+<div class="row" style="font-size:80%;border:1px solid black">
+    <div class="col-md-6">
+        <h1 style="text-align:center">Rawbought Barcode Genaration</h1>
+        <hr />
+        <div class="col-md-6" >
+            <label>Buyer</label>
+            <select class="form-control">
+                <option>H&M</option>
+            </select>
+            <label>Style Number  </label>
+            <input type="text" class="form-control" />
+            <label>Size Code </label>
+            <input type="text" class="form-control" />
+            <label>Size Code </label>
+            <input type="text" class="form-control" />
+            
+            
+            <br />
+            <input type="button" value="Genarate" class="btn btn-success btn-sm" />
+        </div>
+        <div class="col-md-6">
+            <div style="height:300px;margin-top:100px;width:100%;text-align:center">
+                <img src="~/Image/barcode (1).gif" />
+                <input type="button" value="Download" class="btn btn-success btn-sm" />
+            </div>
+            
+        </div>
+    </div>
+</div>
+

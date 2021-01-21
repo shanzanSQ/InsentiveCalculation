@@ -24,8 +24,15 @@
     .btn, .form-control {
         border-radius: 0px;
     }
+    /*input[name=operationname],input[name=smv],input[name=totalsmv]{
+        padding:0px;
+        margin:0px;
+        height:unset;
+        border:none;
+        background-color:none
+    }*/
 </style>
-<font size="2" face="Times New Roman">
+<font size="1" face="Times New Roman">
     <div class="container" id="maincontainer">
         <br />
         <div class="row">
@@ -95,6 +102,16 @@
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-md-6">
+                        <label for="machine_Id">Machine Id : </label>
+                        <input type="text" class="form-control" id="machine_Id" />
+                    </div>
+                    <div class="col-md-6">
+                        <label for="operator_Id">Operator Id :  </label>
+                        <input type="text" class="form-control" id="operator_Id" />
+                    </div>
+                </div>
+                <div class="row">
                     <div style="display:none" class="col-md-6">
                         <label for="ProductName">Product Name : </label>
                         <input type="text" class="form-control" style="display:none" id="ProductName" value="productname" />
@@ -131,17 +148,18 @@
                     <button class="btn btn-success" id="set_approver">Send to Approver</button>
                 </div>
             </div>
-            <div class="col-md-7">
+            <div class="col-md-6">
                 <label for="operationTable">Operation Table</label>
-                <table id="operationTable" border="1" class="table table-responsive table-striped">
-                    <tr>
-                        <th></th>
-                        <th width="10%">No </th>
-                        <th width="40%">Name </th>
-                        <th width="15%">SMV</th>
-                        <th width="15%">Total SMV</th>
-                        <th width="20%">Section</th>
-                    </tr>
+                <table id="operationTable"  border="1" class="table table-responsive table-striped" width="100%">
+                        <tr>
+                            <th ><input type="hidden" value="0" />All</th>
+                            <th width="10%">No </th>
+                            <th width="40%">Name </th>
+                            <th width="15%">SMV</th>
+                            <th width="15%">Total SMV</th>
+                            <th width="20%">Section</th>
+                        </tr>
+                    
                 </table>
             </div>
         </div>
@@ -169,10 +187,8 @@
 
 @Scripts.Render("~/bundles/jquery")
 <script type="text/javascript">
-        LoadBusinessUnit();
-        LoadBuyer();
-
-
+    LoadBusinessUnit();
+    LoadBuyer();
         $('#nextButton').on('click',
             function () {
                 $('#nextButton').show();
@@ -406,7 +422,7 @@
                 data: {StyleId:id},
                 async: true,
                 success: function (data) {
-                    //$("#operationTable").find("tr:gt(0)").remove();
+                    $("#operationTable").find("tr:gt(0)").remove();
                     $("#operationTable").empty();
                     var headrow = $("<th></th><th width='10%'>No</th><th width='40%'>Operation Name </th><th width='15%'>SMV</th><th width='15%'>SMV</th><th width='20%'>Operation Section</th>");
                    $("#operationTable").append(headrow)
@@ -516,7 +532,9 @@
                 jsonData["Quantity"] = $('#bundle_quantity').val();
                 jsonData["CutNo"] = $('#cut_No').val();
                 jsonData["ShadeNO"] = $('#shade_no').val();
-                jsonData["ProductName"] = $('#ProductName').val();
+            jsonData["ProductName"] = $('#ProductName').val();
+            jsonData["MachineId"] = $('#machine_Id').val() ?? 0;
+            jsonData["LotNo"] = $('#lot_no').val() ?? 0;
             jsonData["NoOfBundle"] = $('#no_of_bundle').val();
              var jsonObj = [];
 

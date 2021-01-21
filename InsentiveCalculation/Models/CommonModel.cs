@@ -9,6 +9,8 @@ namespace InsentiveCalculation.Models
     {
         public int BuyerId { get; set; }
         public string BuyerName { get; set; }
+        public int CatagoryId { get; set; }
+        public string CatagoryName { get; set; }
 
         public int StyleId { get; set; }
         public string StyleName { get; set; }

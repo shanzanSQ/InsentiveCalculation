@@ -1,0 +1,101 @@
+﻿@model IEnumerable<InsentiveCalculation.Models.QmsUserModel>
+@{
+    ViewBag.Title = "AllQmsUserInfo";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="modal" id="myModal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"
+                        data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" style="text-align: center">User Information</h4>
+            </div>
+            <div id="modalbody" class="modal-body">
+                <div class="form-group-sm">
+                    <label>User Name</label>
+                    <input type="text" id="usname" class="form-control" />
+                    <label>Type Old Password</label>
+                    <input type="text" id="oldpassword" placeholder="Type Old Password" class="form-control" />
+                    <label>Type New Password</label>
+                    <input type="text" id="newpassword" placeholder="Type New Password" class="form-control" />
+                    <label>Type Password Again</label>
+                    <input type="text" id="confirm_password" placeholder="Type Password Again" class="form-control" />
+                    <button type="button" style="margin-top:2px;"  class="btn btn-success btn-sm">Update</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="remove_button" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<style>
+    .fa {
+        cursor: pointer;
+    }
+</style>
+<div class="container-fluid">
+    <p style="text-align:center;font-weight:bold">All User List </p>
+    <hr />
+    <div class="col-md-12">
+        <table id="userInfoTable" class="table table-striped">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Business Unit</th>
+                    <th>Production Unit</th>
+                    <th>Module</th>
+                    <th>Line</th>
+                    <th>User Name</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            @{ int count = 0; }
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    count++;
+                    <tr>
+                        <td>@count</td>
+                        <td>@item.BusinessUnitName</td>
+                        <td>@item.PunitName</td>
+                        <td>@item.FloorModuleName</td>
+                        <td>@item.LineName</td>
+                        <td>@item.UserName</td>
+                        <td>
+                            <i class="fa fa-edit" onclick="OpenModal('@item.UserName')"> Change Password </i>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jquery")
+<script type="text/javascript">
+    $(function () {
+        $("#userInfoTable").DataTable({
+                                    dom: 'Blfrtip',
+                                      buttons: [
+                                          'copy','csv', 'excel', 'print'
+                                    ],
+                                      dom: 'Blfrtip',
+                                      lengthMenu: [
+                                          [10, 25, 50,100,-1],
+                                          ['10', '25', '50','100','All']
+                                      ],
+        });
+    });
+
+    function OpenModal(value,password) {
+        $('#myModal').modal('toggle');
+       // $('.modal-title').html(value);
+        $('#usname').val(value);
+        $('#oldpassword').val(password);
+
+    }
+</script>

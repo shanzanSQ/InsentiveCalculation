@@ -1,0 +1,42 @@
+﻿
+<div class="row">
+    <div class="col-md-3">
+        <label for="selectBU">Select Cluster</label>
+        <select id="selectBU" class="form-control form-control-sm">
+        </select>
+        <label for="silhoutteCatagory">Silhoutte Catagory</label>
+        <select id="silhoutteCatagory" class="form-control form-control-sm">
+        </select>
+        <label for="buyerSelect">Select Buyer</label>
+        <select style="width: 100%;border-radius:0px" id="buyerSelect" class="form-control form-control-sm select2">
+        </select>
+        <label for="styleSelect">Select Style</label>
+        <select id="styleSelect" class="form-control form-control-sm">
+        </select>
+        <div style="text-align:center">
+            <br />
+            <input type="button" value="Save & Continue" class="btn btn-primary btn-sm" onclick="RegisterStyleToDatabase()" />
+        </div>
+    </div>
+    <div class="col-md-9" id="gallerydiv">
+
+    </div>
+</div>
+<script src="~/Assets/bower_components/select2/dist/js/select2.min.js"></script>
+<script type="text/javascript">
+    $('#buyerSelect').select2();
+    $('#existingStyle').select2();
+    $('#buyerSelect').on('change',
+            function () {
+                var buyerId = $("#buyerSelect").val();
+                LoadStyle(buyerId,'#styleSelect');
+        });
+    $('#silhoutteCatagory').on('change',
+            function () {
+                var categoryId = $("#silhoutteCatagory").val();
+                ShowSilhoutteGallery(categoryId);
+            });
+    LoadBuyer('#buyerSelect');
+    LoadBusinessUnit();
+    LoadCategoryType();
+</script>

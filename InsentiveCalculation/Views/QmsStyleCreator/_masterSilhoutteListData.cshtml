@@ -1,0 +1,34 @@
+﻿@model IEnumerable<InsentiveCalculation.Models.MasterSilhoteeTable>
+<div class="box">
+    <table id="listtableData" class="table table-striped" width="100%">
+        <thead>
+            <tr>
+                <th>Register Id</th>
+                <th>Unit Name</th>
+                <th>Buyer Name</th>
+                <th>Style Name</th>
+                <th>Silhoutte Name</th>
+                <th>Create Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.MasterSilhouteeId</td>
+                    <td>@item.UnitName</td>
+                    <td>@item.BuyerName</td>
+                    <td>@item.StyleName</td>
+                    <td>@item.SilhouetteName</td>
+                    <td>@item.CreateDate</td>
+                    <td>
+                        <input type="button" value="Preview" onclick="GetSilhoutteInformation(@item.MasterSilhouteeId)" class="btn btn-primary btn-sm" />
+                        <input type="button" value="Copy" onclick="CopyModalOpen('@item.SilhouetteName',@item.MasterSilhouteeId)" class="btn btn-success btn-sm" />
+                        @*<input type="button" value="Delete" onclick="DeleteAlert(@item.MasterSilhouteeId)" class="btn btn-danger btn-sm" />*@
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
