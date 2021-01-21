@@ -21,6 +21,8 @@ namespace InsentiveCalculation.Models
         public int ShadeNO { get; set; }
         public string ProductName { get; set; }
         public int NoOfBundle { get; set; }
+        public string MachineId { get; set; }
+        public string LotNo { get; set; }
         public List<CommonModel> OprationList { get; set; }
     }
 }

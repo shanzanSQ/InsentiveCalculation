@@ -24,7 +24,7 @@
                     <td>@item.FileName</td>
                     <td>@item.DirectoryName</td>
                     <td>
-                        @if (item.EmployeeId.Length==0)
+                        @if (item.EmployeeId.Length<4)
                         {
                             <input type="text"  id="newCode_@item.FileNameId" />
                             <input type="button" class="btn btn-sm btn-success" value="Add" onclick="AddNewEmployeeToFile(@item.FileNameId, '#newCode_@item.FileNameId')" />

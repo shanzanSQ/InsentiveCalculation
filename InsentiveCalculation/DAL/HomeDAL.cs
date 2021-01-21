@@ -1,4 +1,4 @@
-﻿using Inlite.ClearImageNet;
+﻿
 using InsentiveCalculation.DataManager;
 using InsentiveCalculation.Models;
 using iTextSharp.text;
@@ -41,36 +41,36 @@ namespace InsentiveCalculation.DAL
             string workerId = "";
             try
             {
-                BarcodeReader reader = new BarcodeReader();
-                reader.Pdf417 = true;
+               // BarcodeReader reader = new BarcodeReader();
+               // reader.Pdf417 = true;
                 // reader.DataMatrix = true;
                 // reader.QR = true;
-                Inlite.ClearImageNet.Barcode[] barcodes = reader.Read(fileName, page);
+                //Inlite.ClearImageNet.Barcode[] barcodes = reader.Read(fileName, page);
                 // Process results
 
-                foreach (Inlite.ClearImageNet.Barcode bc in barcodes)
-                {
-                    string[] smv = bc.Text.ToString().Split(',');
-                    if (smv.Length < 2)
-                    {
-                        workerId = smv[0];
-                        if (workerId.Length == 5)
-                        {
-                            workerId = '0' + workerId;
-                        }
-                        else if (workerId.Length == 4)
-                        {
-                            workerId = "00" + workerId;
-                        }
-                    }
-                    else
-                    {
-                        BarcodeModel barcode = new BarcodeModel();
-                        barcode.BarcodeNumber = System.Int32.Parse(smv[0]);
-                        barcode.StandardMinuteValue = float.Parse(smv[1]);
-                        barcodemodelList.Add(barcode);
-                    }
-                }   // do other processing
+                //foreach (Inlite.ClearImageNet.Barcode bc in barcodes)
+                //{
+                //    string[] smv = bc.Text.ToString().Split(',');
+                //    if (smv.Length < 2)
+                //    {
+                //        workerId = smv[0];
+                //        if (workerId.Length == 5)
+                //        {
+                //            workerId = '0' + workerId;
+                //        }
+                //        else if (workerId.Length == 4)
+                //        {
+                //            workerId = "00" + workerId;
+                //        }
+                //    }
+                //    else
+                //    {
+                //        BarcodeModel barcode = new BarcodeModel();
+                //        barcode.BarcodeNumber = System.Int32.Parse(smv[0]);
+                //        barcode.StandardMinuteValue = float.Parse(smv[1]);
+                //        barcodemodelList.Add(barcode);
+                //    }
+                //}   // do other processing
             }
             catch (Exception ex)
             {
@@ -100,7 +100,7 @@ namespace InsentiveCalculation.DAL
             catch (Exception e)
             {
                 accessManager.SqlConnectionClose(true);
-                throw;
+                throw e;
             }
             finally
             {
@@ -132,7 +132,7 @@ namespace InsentiveCalculation.DAL
             catch (Exception e)
             {
                 accessManager.SqlConnectionClose(true);
-                throw;
+                throw e;
             }
             finally
             {
@@ -334,7 +334,6 @@ namespace InsentiveCalculation.DAL
                 accessManager.SqlConnectionClose();
             }
         }
-
         public bool SavePotoDatabase(string PoNumber, int StyleId, int numberProduction, int maxNumber,int userId)
         {
             bool result = false;
@@ -360,7 +359,6 @@ namespace InsentiveCalculation.DAL
                 accessManager.SqlConnectionClose();
             }
         }
-
         public List<PurchaseOrderModel> GetPoFromDatabaseByStyle(int StyleId,int userId)
         {
             try
@@ -395,7 +393,6 @@ namespace InsentiveCalculation.DAL
                 accessManager.SqlConnectionClose();
             }
         }
-
         public PurchaseOrderModel GetPOInformationById(int PoID, int userId)
         {
             PurchaseOrderModel purchaseOrder = new PurchaseOrderModel();
@@ -429,7 +426,6 @@ namespace InsentiveCalculation.DAL
                 accessManager.SqlConnectionClose();
             }
         }
-
         public int SaveDataEntryTable(DataEntryTest datentry,int userid)
         {
             try
@@ -456,7 +452,6 @@ namespace InsentiveCalculation.DAL
                 accessManager.SqlConnectionClose();
             }
         }
-
         public ResultResponse DeleteOperationFromStyle(CommonModel commonModel, int userId)
         {
             ResultResponse resultResponse = new ResultResponse();
@@ -529,6 +524,8 @@ namespace InsentiveCalculation.DAL
                     aParameters.Add(new SqlParameter("@PONumber", barcodeGenarateModal.PONumber));
                     aParameters.Add(new SqlParameter("@QuantityGenarate", (barcodeGenarateModal.Quantity*barcodeGenarateModal.NoOfBundle)));
                     aParameters.Add(new SqlParameter("@BusinessUnitId", barcodeGenarateModal.BusinessUnitId));
+                    aParameters.Add(new SqlParameter("@MachineId", barcodeGenarateModal.MachineId));
+                    aParameters.Add(new SqlParameter("@LotNo", barcodeGenarateModal.LotNo));
                     masterPrimaryKey = accessManager.SaveDataReturnPrimaryKey("sp_SaveGenaratedMasterTable", aParameters);
                 }
                 catch (Exception exception)
@@ -540,9 +537,8 @@ namespace InsentiveCalculation.DAL
                 {
                     accessManager.SqlConnectionClose();
                 }
-
-                var pgSize = new iTextSharp.text.Rectangle(100, 65);
-                iTextSharp.text.Document doc = new iTextSharp.text.Document(pgSize, 0, 0, 0, 0);
+                var pgSize = new iTextSharp.text.Rectangle(225, 75); //225,75
+                iTextSharp.text.Document doc = new iTextSharp.text.Document(pgSize, 0, 0, 2, 2);//0,0,0,0
                 string path = HttpContext.Current.Server.MapPath("~/GenaratePDF/");
                 DateTime dt = DateTime.Now;
                 string fileName = dt.Minute.ToString()+dt.Second.ToString()+dt.Millisecond.ToString();
@@ -554,38 +550,47 @@ namespace InsentiveCalculation.DAL
                 for (int i = 0; i < barcodeGenarateModal.NoOfBundle; i++)
                 {
                     int count = 0;
-                    iTextSharp.text.Font font = FontFactory.GetFont("Calibri", 5.5f, BaseColor.BLACK); // from 5.0f 
-                    iTextSharp.text.Font fontlast = FontFactory.GetFont("Calibri", 5.5f, BaseColor.BLACK); // from 5.0f 
-                    String header = "Buyer Name : " + barcodeGenarateModal.BuyerName+"\nStyle : " + barcodeGenarateModal.StyleName + "\nBundle Quantity : " + barcodeGenarateModal.Quantity +
-                            " Bundle No : " + (i+1) + "\nColor : " + barcodeGenarateModal.Color + " Size : " + barcodeGenarateModal.BundleSize;
-                    iTextSharp.text.Paragraph paraheader = new iTextSharp.text.Paragraph(header, font);
-                    PdfPCell cell1 = new PdfPCell { PaddingLeft = 0, PaddingTop = 1, PaddingBottom = 3, PaddingRight = 0 };
-                    cell1.AddElement(paraheader);
-                    cell1.Border = 0;
-                    pdftable.AddCell(cell1);
+                    iTextSharp.text.Font font = FontFactory.GetFont("Calibri", 6f, BaseColor.BLACK); // from 5.0f 
+                    iTextSharp.text.Font fontlast = FontFactory.GetFont("Calibri", 6f, BaseColor.BLACK); // from 5.0f 
+                    //String header = "Buyer Name : " + barcodeGenarateModal.BuyerName+"\nStyle : " + barcodeGenarateModal.StyleName + "\nBundle Quantity : " + barcodeGenarateModal.Quantity +
+                    //        "\nBundle No : " + (i+1) + "\nColor : " + barcodeGenarateModal.Color + ", Size : " + barcodeGenarateModal.BundleSize+ "\nPO Number : " + barcodeGenarateModal.PONumber;
+                    //iTextSharp.text.Paragraph paraheader = new iTextSharp.text.Paragraph(header, font);
+                   //PdfPCell cell1 = new PdfPCell { PaddingLeft = 0, PaddingTop = 0, PaddingBottom = 0, PaddingRight = 0 };
+                   // cell1.AddElement(paraheader);
+                   // cell1.Border = 0;
+                    //pdftable.AddCell(cell1);
                     foreach (CommonModel barcodeGenarate in barcodeGenarateModal.OprationList)
                     {
                         count++;
                         int barcodeNo = BarcodePrimaryKey(masterPrimaryKey,i+1, barcodeGenarate,barcodeGenarateModal.BusinessUnitId);
-                        var bw = new ZXing.BarcodeWriter();
-                        var encOptions = new ZXing.Common.EncodingOptions() { Margin = 0}; // margin 0 to 1 
-                        bw.Options = encOptions;
-                        bw.Format = ZXing.BarcodeFormat.PDF_417;
-                        var result = new Bitmap(bw.Write(barcodeNo+","+barcodeGenarate.OperationSMV.ToString()));
+                        var bw = new ZXing.BarcodeWriter()
+                        {
+                            Format = ZXing.BarcodeFormat.PDF_417
+                        };
+                        bw.Options = new ZXing.Common.EncodingOptions() { Margin = 1 };
+
+                    // var encOptions = new ZXing.Common.EncodingOptions() { Margin = 0}; // margin 0 to 1 
+
+                    //bw.Format = ZXing.BarcodeFormat.CODE_128;
+                    var bitmap = bw.Write(barcodeNo + "," + barcodeGenarate.OperationSMV);
+                        Bitmap result = new Bitmap(bitmap,new Size(210,55));//100,60 // 210,60
+                        //var result = new Bitmap();
                         result.Save(path+barcodeGenarate.OperationName, System.Drawing.Imaging.ImageFormat.Png);
-                        string first = barcodeNo+"-"+ barcodeGenarateModal.StyleName + ", " + barcodeGenarate.OperationName+","+ barcodeGenarateModal.BundleSize;
-                        string last = barcodeGenarate.OperationSMV+
+                        //barcodeNo + "-" +
+                        string first = barcodeNo+" , "+barcodeGenarateModal.StyleName + ", " + barcodeGenarate.OperationName+","+ barcodeGenarateModal.BundleSize;
+                        string last =barcodeGenarate.OperationSMV+
                             ", " + barcodeGenarateModal.SelectDate+","
                         + barcodeGenarateModal.Quantity +
-                            ", " + (i+1) + "-" + count + ", " + barcodeGenarateModal.Color;
+                            ", " + (i+1) + "-" + count + ", " + barcodeGenarateModal.Color+","+barcodeGenarateModal.PONumber;
 
                         iTextSharp.text.Paragraph paragraph = new iTextSharp.text.Paragraph(first, font);
                         iTextSharp.text.Paragraph lastparagraph = new iTextSharp.text.Paragraph(last, fontlast);
-                        paragraph.SetLeading(1.0f, 1.0f);
-                        paragraph.SpacingAfter = 2;
-                        lastparagraph.SetLeading(1.0f, 1.0f);
+                        paragraph.SetLeading(0.8f, 0.8f);
+                        paragraph.SpacingAfter = 1;//2
+                        lastparagraph.SetLeading(0.8f, 0.8f);
                         iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(path + barcodeGenarate.OperationName);
-                        image.ScaleAbsolute(85,25);
+                        //image.SpacingAfter = 5;// for code 128
+                        //image.ScaleAbsolute(85,50);
                        // image.PaddingTop = 3.0f;
                         PdfPCell cell = new PdfPCell { PaddingLeft = 0, PaddingTop = 0, PaddingBottom = 0, PaddingRight = 0 };
                         // cell.FixedHeight = 60;
@@ -662,8 +667,6 @@ namespace InsentiveCalculation.DAL
                 accessManager.SqlConnectionClose();
             }
         }
-
-
         public List<UserInformation> GetWorkerByCode(string EmployeeCode, int userID,int BusinessUnit)
         {
             try
@@ -700,8 +703,8 @@ namespace InsentiveCalculation.DAL
         {
             ResultResponse resultResponse = new ResultResponse();
 
-            var pgSize = new iTextSharp.text.Rectangle(100, 65);
-            iTextSharp.text.Document doc = new iTextSharp.text.Document(pgSize, 0, 0, 0, 0);
+            var pgSize = new iTextSharp.text.Rectangle(225,75);//100,65 //200,65
+            iTextSharp.text.Document doc = new iTextSharp.text.Document(pgSize, 0, 0, 2, 2);//0,0,0,0
             string path = HttpContext.Current.Server.MapPath("~/GenaratePDF/");
             DateTime dt = DateTime.Now;
             string fileName = dt.Minute.ToString() + dt.Second.ToString() + dt.Millisecond.ToString();
@@ -712,26 +715,33 @@ namespace InsentiveCalculation.DAL
             PdfPTable pdftable = new PdfPTable(1);
             for (int i = 0; i < users.Count; i++)
             {
-                int count = 0;
-                iTextSharp.text.Font font = FontFactory.GetFont("Calibri", 6.0f, BaseColor.BLACK); // from 5.0f 
+                    int count = 0;
+                    iTextSharp.text.Font font = FontFactory.GetFont("Calibri", 6.0f, BaseColor.BLACK); // from 5.0f 
                     count++;
-                    var bw = new ZXing.BarcodeWriter();
-                    var encOptions = new ZXing.Common.EncodingOptions() { Margin = 0 }; // margin 0 to 1 
-                    bw.Options = encOptions;
-                    bw.Format = ZXing.BarcodeFormat.PDF_417;
-                    var result = new Bitmap(bw.Write(users[i].UserSQNumber));
+                   // var bw = new ZXing.BarcodeWriter();
+                    //var encOptions = new ZXing.Common.EncodingOptions() { Margin = 0 }; // margin 0 to 1 
+                    //bw.Options = encOptions;
+                    //bw.Format = ZXing.BarcodeFormat.PDF_417;
+                    var bw = new ZXing.BarcodeWriter()
+                    {
+                        Format = ZXing.BarcodeFormat.PDF_417
+                    };
+                    bw.Options = new ZXing.Common.EncodingOptions() { Margin = 1 };
+                    var result = new Bitmap(bw.Write(users[i].UserSQNumber),new Size(210,55)); //200,50
                     result.Save(path + users[i].UserSQNumber, System.Drawing.Imaging.ImageFormat.Png);
                     string first = "Employee Code : "+users[i].UserSQNumber;
-                    string last = users[i].UserInformationName.ToString() + "\n" + users[i].DesignationName.ToString();
+                    string last = users[i].UserInformationName.ToString() + " - " + users[i].DesignationName.ToString();
                     iTextSharp.text.Paragraph paragraph = new iTextSharp.text.Paragraph(first, font);
                     iTextSharp.text.Paragraph lastparagraph = new iTextSharp.text.Paragraph(last, font);
-                    paragraph.SetLeading(1.0f, 1.0f);
-                    lastparagraph.SetLeading(1.0f, 1.0f);
+                    paragraph.SetLeading(0.8f, 0.8f);
+                    paragraph.SpacingAfter = 1;
+                    lastparagraph.SetLeading(0.8f, 0.8f);
+                    lastparagraph.SpacingBefore = 1;
                     iTextSharp.text.Image image = iTextSharp.text.Image.GetInstance(path + users[i].UserSQNumber);
-                    image.ScaleToFit(new iTextSharp.text.Rectangle(85, 100));
-                    image.SetAbsolutePosition(0.0f,0.0f);
-                    image.PaddingTop = 2;
-                    PdfPCell cell = new PdfPCell { PaddingLeft = 0, PaddingTop = 2, PaddingBottom = 0, PaddingRight = 0 };
+                   // image.ScaleToFit(new iTextSharp.text.Rectangle(85, 100));
+                    //image.SetAbsolutePosition(0.0f,0.0f);
+                  //  image.PaddingTop = 5;
+                    PdfPCell cell = new PdfPCell { PaddingLeft = 0, PaddingTop = 0, PaddingBottom = 0, PaddingRight = 0 };
                     // cell.FixedHeight = 60;
                     cell.AddElement(paragraph);
                     cell.AddElement(image);

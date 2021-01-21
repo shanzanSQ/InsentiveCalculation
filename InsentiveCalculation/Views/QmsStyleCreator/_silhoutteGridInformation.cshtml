@@ -1,0 +1,389 @@
+﻿@model InsentiveCalculation.Models.MasterSilhoteeTable
+<style>
+    th,td{
+        text-align:center;
+        padding:1px;
+    }
+    .grid-col input[type=text]{
+        display:none;
+    }
+    .grid-col.highlighted {
+        background-color: rgb(0, 0, 0);
+    }
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(15,1fr);
+        border: 1px solid green;
+        width: 766px;
+        height: 588px;
+    }
+    #frontGridsection {
+        background-image: url('@Url.Content("~/StyleUpload/"+Model.Imagelist.First().ServerFileName)');
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+
+    #backgridSection {
+        background-image: url('@Url.Content("~/StyleUpload/"+Model.Imagelist.Last().ServerFileName)');
+        background-repeat: no-repeat;
+        background-size: contain;
+    }
+
+    .grid-col {
+        border-bottom: 0.5px solid black;
+        border-right: 0.5px solid black;
+        opacity: 0.5;
+        text-align: center;
+        display: grid;
+    }
+
+    .list-group-item {
+        padding: 0px;
+        color: azure;
+    }
+    .list-group{
+        border-radius:0px;
+    }
+    .frontDivsection, .backdivsection {
+        display: none;   
+    }
+
+    #selecetedBackgrid, #selecetedFrontgrid {
+        background-color: white;
+        color: black;
+        resize: none;
+    }
+    #backContainer,#frontContainer{
+        width:800px;
+        height:600px;
+    }
+</style>
+<div>
+    <table border="1" width="100%">
+        <tr>
+            <th>Id</th>
+            <th>Unit Name</th>
+            <th>Buyer Name</th>
+            <th>Style Name</th>
+            <th>Silhoutte Name</th>
+        </tr>
+        <tr>
+            <td>@Model.MasterSilhouteeId</td>
+            <td><input type="hidden" value="@Model.CatagoryId" id="category_Id"/>@Model.UnitName</td>
+            <td>@Model.BuyerName</td>
+            <td>@Model.StyleName</td>
+            <td>@Model.SilhouetteName</td>
+        </tr>
+    </table>
+    <br />
+    <div class="row">
+        <div class="col-md-3">
+            <div class="form-inline">
+                <input type="button" class="btn btn-success btn-sm" onclick="frontOrbackPreview('.frontDivsection','.backdivsection',0)" value="Front Side" />
+                <input type="button" class="btn btn-primary btn-sm" onclick="frontOrbackPreview('.backdivsection','.frontDivsection',1)" value="Back Side" />
+            </div>
+            <div class="frontDivsection">
+                <table border="1" width="100%" class="frontdefecttable">
+                    <caption>Defect Position Name</caption>
+                    @*<thead>
+                        <tr>
+                            <td width="10%"></td>
+                            <td width="60%">All Defect Position</td>
+                            <td width="30%">
+                                <button class="btn btn-sm btn-primary" value="0" onclick="viewAllPosition(this,'.frontPositionColor','#frontGridsection .grid-col')"><i class="fa fa-eye-slash" style="font-size:11px"></i></button>
+                                <button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    </thead>*@
+                    <tbody id="frontDefectbody">
+                        @if (Model.FrontPositionList != null)
+                        {
+                            foreach (var depo in Model.FrontPositionList)
+                            {
+                                <tr>
+                                    <td width="10%" class="frontPositionColor" style="background-color:@depo.DefectColor">
+                                        <input type="text" value="@depo.DefectPoistionId" style="display:none" name="defectID" />
+                                    </td>
+                                    <td width="60%">@depo.DefectPositionName</td>
+                                    <td width="30%">
+                                        <button class="btn btn-sm btn-primary" value="0" onclick="GridByDefectPosition(@depo.DefectPoistionId, '#frontGridsection .grid-col',@Model.MasterSilhouteeId,this)"><i class="fa fa-eye-slash" style="font-size:11px"></i></button>
+                                        <button class="btn btn-sm btn-danger" onclick="AlertBeforGrid(@depo.DefectPoistionId,@Model.MasterSilhouteeId)"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                @*<li class="list-group-item" style="background-color:@depo.DefectColor" onclick="selectedgridfromList(this, @depo.DefectPoistionId, '')"></li>*@
+                            }
+                        }
+                    </tbody>
+                </table>
+                <h3>Front Side Selected</h3>
+                <label for="selecetedFrontgrid">Selected Front Box</label>
+                <textarea cols="3" id="selecetedFrontgrid" disabled type="text" class="form-control" />
+            </div>
+            <div class="backdivsection">
+                <table border="1" width="100%" class="backposition">
+                    <caption>Defect Position Name</caption>
+                    <tbody id="backDefectbody">
+                        @if (Model.BackPostionList != null)
+                        {
+                            foreach (var depo in Model.BackPostionList)
+                            {
+                                <tr>
+                                    <td width="10%" class="backpositioncolor" style="background-color:@depo.DefectColor">
+                                        <input type="text" value="@depo.DefectPoistionId" style="display:none" name="defectID" />
+                                    </td>
+                                    <td width="60%">@depo.DefectPositionName</td>
+                                    <td width="30%">
+                                        <button class="btn btn-sm btn-primary" value="0" onclick="GridByDefectPosition(@depo.DefectPoistionId, '#backgridSection .grid-col',@Model.MasterSilhouteeId,this)"><i class="fa fa-eye-slash" style="font-size:11px"></i></button>
+                                        <button class="btn btn-sm btn-danger" onclick="AlertBeforGrid(@depo.DefectPoistionId,@Model.MasterSilhouteeId)"><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            }
+
+                        }
+                    </tbody>
+                </table>
+                <h3>Back Side Selected</h3>
+                <label for="selecetedBackgrid">Selected Back Box</label>
+                <textarea cols="3" id="selecetedBackgrid" disabled type="text" class="form-control" />
+            </div>
+            <div>
+                <label for="defectPostionName">Select Defect Position Name</label>
+                <select id="defectPostionName" class="select2 form-control"></select>
+                  
+                <div style="text-align:center">
+                    <br />
+                    <input type="button" class="btn btn-sm btn-success" onclick="AssignDefectposition(@Model.MasterSilhouteeId)" value="Assign New Defect Position " />
+                </div>
+                
+            </div>
+        </div>
+        <div class="col-md-9" >
+            <div id="frontContainer" class="frontDivsection" >
+                <div class="grid" id="frontGridsection">
+                    @for (int i = 1; i < 196; i++)
+                    {
+                        <div class="grid-col">
+                            @i;
+                            <input type="text" name="gridNo" value="@i" />
+                        </div>
+                    }
+                </div>
+            </div>
+            <div id="backContainer" class="backdivsection">
+                <div class="grid" id="backgridSection">
+                    @for (int i = 1; i < 196; i++)
+                    {
+                        <div class="grid-col">
+                            @i;
+                            <input type="text" name="gridNo" value="@i" />
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+ </div>
+<script src="~/Assets/bower_components/select2/dist/js/select2.min.js"></script>
+    <script type="text/javascript">
+        $("#defectPostionName").select2();
+        if (frontOrBack == 0) {
+           frontOrbackPreview('.frontDivsection', '.backdivsection', 0);
+        } else {
+            frontOrbackPreview('.backdivsection', '.frontDivsection', 1);
+        }
+        var isToggled = true;
+        var isMouseDown = false, isHighlighted;
+        $(".grid-col").mousedown(function () {
+            isMouseDown = true;
+            $(this).css("background-color", "");
+            $(this).toggleClass("highlighted");
+            isHighlighted = $(this).hasClass("highlighted");
+            GetSelectedGrid(frontOrBack);
+            // $(this).html(isHighlighted);
+            return false; // prevent text selection
+        }).mouseover(function () {
+            if (isMouseDown) {
+                $(this).css("background-color", "");
+                $(this).toggleClass("highlighted", isHighlighted);
+                //$(this).html(isHighlighted);
+                GetSelectedGrid(frontOrBack);
+
+            }
+        }).bind("selectstart", function () {
+            return false;
+        });
+            $(document).mouseup(function () {
+                isMouseDown = false;
+                // $(this).find("input[name=idvalue]").val(0);
+            });
+        function frontOrbackPreview(showdiv, hidediv,val) {
+            $(showdiv).show();
+            $(hidediv).hide();
+            frontOrBack = val;
+            GetAllDefectPostion(frontOrBack);
+        }
+        function GridByDefectPosition(defectPositionId, gridcontainer, masterSilhoutteId, currentbtn) {
+                 var urlpath = '@Url.Action("ShowGridByDefectPosition", "QmsStyleCreator")';
+                 $.ajax({
+                        url: urlpath,
+                        type: "Post",
+                        data: { DefectPositionId: defectPositionId, MasterSilhouetteId: masterSilhoutteId, FrontOrBack: frontOrBack },
+                        async: true,
+                        success: function (data) {
+                            if ($(currentbtn).val() == 0) {
+                                for (var i = 0; i < data.length; i++) {
+                                    $(gridcontainer).find($("input[name=gridNo][value=" + data[i].GridNo + "]")).parent().css("background-color", data[i].DefectColor);
+                                }
+                                $(currentbtn).val(1);
+                            } else {
+                                for (var i = 0; i < data.length; i++) {
+                                    $(gridcontainer).find($("input[name=gridNo][value=" + data[i].GridNo + "]")).parent().css("background-color","");
+                                }
+                                 $(currentbtn).val(0);
+                            }
+                        },
+                        error: function (err) {
+                            alert(err.responseText);
+                        }
+                 });
+            $(currentbtn).find('i').toggleClass('fa-eye fa-eye-slash');
+        }
+        function GetSelectedGrid(val) {
+            if (val == 0) {
+                var selectedboxFront = [];
+                $("#frontGridsection .highlighted").each(function (i) {
+                    var pos = $(this).find("input[name=gridNo]").val();
+                    selectedboxFront.push(pos);
+                });
+                $("#selecetedFrontgrid").val(selectedboxFront.toString());
+            } else if (val == 1) {
+                var selectedboxBack = [];
+                $("#backgridSection .highlighted").each(function (i) {
+                    var pos = $(this).find("input[name=gridNo]").val();
+                    selectedboxBack.push(pos);
+                });
+                $("#selecetedBackgrid").val(selectedboxBack.toString());
+            }
+            
+        }
+
+        //view all defect position
+        function viewAllPosition(currentsec,colorclass,gridclass) {
+            var value = $(currentsec).val();
+            if (value == 0) {
+                $(colorclass).each(function (i) {
+                    var color = $(this).css("background-color");
+                    var defectPositionId = $(this).find("input[name=defectID]").val();
+                    $(gridclass).each(function (i) {
+                        var pos = $(this).find("input[name=defectPosition]").val();
+                        if (pos == defectPositionId) {
+                            $(this).css("background-color", color);
+                        }
+                    });
+                });
+                $(currentsec).val(1);
+            } else if (value == 1) {
+                $(gridclass).each(function (i) {
+                    $(this).css("background-color", "");
+                });
+                $(currentsec).val(0);
+            }
+            $(currentsec).find('i').toggleClass('fa-eye fa-eye-slash');
+        }
+        function GetAllDefectPostion() {
+            var categoryId = $("#category_Id").val();
+             var urlpath = '@Url.Action("GetAllDefectPosition", "QmsStyleCreator")';
+             $.ajax({
+                    url: urlpath,
+                 type: "Post",
+                 data: { Status: 0,CategoryId:categoryId},
+                    async: true,
+                    success: function (data) {
+                        $('#defectPostionName').empty();
+                        $('#defectPostionName').append("<option value='0'>--Select Defect Position--</option>");
+                        for (var i = 0; i < data.length; i++) {
+                            $("#defectPostionName").append($("<option></option>").val(data[i].DefectPoistionId)
+                                .html(data[i].DefectPositionName));
+                        }
+                    },
+                    error: function (err) {
+                        alert(err.responseText);
+                    }
+                });
+        }
+        function AssignDefectposition(SilhouteeId) {
+            var  jsonObj= [];
+            if (frontOrBack == 0) {
+                $("#frontGridsection .highlighted").each(function (i) {
+                    var JsonData = {};
+                    JsonData["GridNo"]= $(this).find("input[name=gridNo]").val();
+                    JsonData["DefectPositionId"] = $("#defectPostionName").val();
+                    JsonData["MasterSilhouteeId"] = SilhouteeId;
+                    JsonData["FrontorBack"] = frontOrBack;
+                    jsonObj.push(JsonData);
+                    $(this).removeClass("highlighted"); 
+                });
+            } else if (frontOrBack == 1) {
+                $("#backgridSection .highlighted").each(function (i) {
+                    var JsonData = {};
+                    JsonData["GridNo"]= $(this).find("input[name=gridNo]").val();
+                    JsonData["DefectPositionId"] = $("#defectPostionName").val();
+                    JsonData["MasterSilhouteeId"] = SilhouteeId;
+                    JsonData["FrontorBack"] = frontOrBack;
+                    jsonObj.push(JsonData);
+                    $(this).removeClass("highlighted"); 
+                });
+            }
+            if (jsonObj.length > 1) {
+                var urlpath = '@Url.Action("AssignPositionToSilhoutee", "QmsStyleCreator")';
+                $.ajax({
+                    contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(jsonObj),
+                    dataType: 'json',
+                    url: urlpath,
+                    type: "Post",
+                    async: true,
+                    success: function (result) {
+                        if (result.isSuccess) {
+                            swal(result.msg);
+                            GetSilhoutteInformation(SilhouteeId);
+
+                        }
+                    }
+                });
+            } else if ($("#defectPostionName").val() < 1 || $("#defectPostionName").val()=="") {
+                swal("No Defect Position Selected");
+            } else {
+                swal("No Grid Selected");
+            }
+             
+        }
+        function AlertBeforGrid(defectPositionId,masterSilhoutteId) {
+            swal({
+                title: 'Are you Sure to Delete this Defect Position ?',
+                type: 'warning',
+                closeOnCancel: true,
+                showCancelButton: true
+            }, function () {
+                    DeletePositionGrid(defectPositionId,masterSilhoutteId)
+            });
+        }
+        function DeletePositionGrid(defectPositionId,masterSilhoutteId) {
+            var urlpath = '@Url.Action("DeletePositionFromGrid", "QmsStyleCreator")';
+                 $.ajax({
+                        url: urlpath,
+                        type: "Post",
+                        data: { DefectPositionId: defectPositionId, MasterSilhouetteId: masterSilhoutteId, FrontOrBack: frontOrBack },
+                        async: true,
+                     success: function (data) {
+                         if (data.isSuccess) {
+                             GetSilhoutteInformation(masterSilhoutteId);
+                         }
+                        },
+                        error: function (err) {
+                            alert(err.responseText);
+                        }
+                 });
+        }
+    </script>

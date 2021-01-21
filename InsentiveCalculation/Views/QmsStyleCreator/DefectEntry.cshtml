@@ -1,0 +1,467 @@
+﻿
+@{
+    ViewBag.Title = "DefectEntry";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Assets/bower_components/select2/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .fa-trash {
+        color: red;
+        cursor:pointer;
+    }
+    .trcolor{
+        background-color:#c0c0c0;
+    }
+    .fa-play {
+        color: blue;
+        padding-left: 5px;
+        cursor: pointer;
+    }
+    button {
+        border: none;
+    }
+    thead {
+    }
+    th{
+        position:sticky;
+        top:0;
+        background-color:burlywood;
+    }
+    /*thead tr{
+        display:block;
+    }
+     
+    tbody {
+          display:block;
+          overflow:auto;
+          height:200px;
+          width:100%;
+    }*/
+
+    #deftmenu {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    #defectsubmenu li a {
+        color: white;
+    }
+
+    #defectsubmenu > li > .active > a:active {
+        color: white;
+        background-color: #0a0a22;
+    }
+
+    .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:focus, .navbar-default .navbar-nav > .active > a:hover {
+        color: #555;
+        background-color: #d65c14;
+    }
+
+    #defectNavigation {
+        background-color: #37474F;
+    }
+</style>
+<div class="container-fluid ">
+    @*<div id="defectNavigation" class="navbar navbar-default navbar-static-top">
+        <div id="deftmenu">
+            <div class="navbar-collapse collapse">
+                <ul id="defectsubmenu" class="nav navbar-nav">
+                    <li><a href="#" onclick="submenuChange(1)">Add New Defect</a></li>
+                    <li><a href="#" onclick="submenuChange(2)">Add Defect Position</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>*@
+    <div class="col-md-12" id="defectcontainer">
+        <div id="defectsection" class="col-md-6" style="border-right:1px solid gray">
+            <h5 style="text-align:center;font-weight:bold">Defect Entry</h5>
+            <div style="text-align:center">
+                <table width="100%">
+                    <tr>
+                        <td width="50%" style="padding-right:2px">
+                            <select id="categoryList" onchange="CategoryChange()" class="form-control form-control-sm">
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" id="defectName" placeholder="Add New Defect" class="form-control" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="form-inline" style="text-align:center;padding:2px">
+                <button class="btn btn-success btn-sm " onclick="AddDefect()"><i class="fa fa-plus-circle"></i>Add Defect</button>
+            </div>
+            <br />
+            <div style="height:400px;overflow:auto">
+                <table id="defectlistTable" class="table table-striped">
+                    <thead >
+                        <tr>
+                            <th><input type="checkbox" onchange="selectAll(this)" />All</th>
+                            <th><i class="fa fa-play" onclick="SetAllDefectToPosition()"></i>No</th>
+                            <th>Defect Name</th>
+                            <th><input type="text" placeholder="Search Here Type" class="form-control" id="searchDefectId" /></th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="defectlistBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h5 style="text-align:center;font-weight:bold">Defect Position Entry</h5>
+            <div >
+                <table width="100%">
+                    <tr>
+                        <td width="50%" style="padding-right:2px" >
+                            <select id="defectselect"  onchange="GetDefectByPosition()" class="form-control">
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" id="positionNametext" placeholder="New Defect Position" class="form-control form-control-sm" />
+                        </td>
+                    </tr>
+                </table>
+                
+                @*<input type="text" placeholder="Search Here Type" class="form-control" id="searchDefectId" />*@
+                
+
+            </div>
+            <div class="form-inline" style="text-align:center;padding:2px">
+                <button class="btn btn-info btn-sm form-control" onclick="UpdateDefectPosition('none',$('#defectselect').val())" id="update_defectposition"><i class="fa fa-refresh"></i>Update</button>
+                <button class="btn btn-primary btn-sm form-control" onclick="AddDefectPostion()"><i class="fa fa-plus-circle"></i>Add New Position</button>
+
+            </div>
+            <br />
+            <div style="height:400px;overflow:auto">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Defect Name</th>
+                            <th>
+                                <div class="md-form mt-0">
+                                    <input id="searchdefetpos" class="form-control " type="text" placeholder="Search" aria-label="Search">
+                                </div>
+                            </th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="assigndefecttoPosition">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/bundles/jquery")
+<script src="~/Scripts/filter-table.min.js"></script>
+<script src="~/Assets/bower_components/select2/dist/js/select2.min.js"></script>
+<script type="text/javascript">
+     //$("#defectsubmenu").find('li:nth-child(1)').addClass("active");
+     //$('#defectsubmenu > li > a').click(function() {
+     //   $('li').removeClass();
+     //   $(this).parent().addClass('active');
+    //});
+    $('#defectlistBody').filterTable("#searchDefectId");
+    $('#assigndefecttoPosition').filterTable("#searchdefetpos");
+   // GetAllDefectPostion($("#categoryList").val(), '#defectpositionTable');
+    $('#defectselect').select2({
+        //allowClear: true,
+        //placeholder: 'Select Defect position',
+        //closeOnSelect: false
+    });
+    LoadCategoryType();
+    //$("#defectselect").on("select2:select", function (evt) {
+    //    var positionId = $("#defectselect").val();
+    //    alert(positionId);
+    //});
+    function CategoryChange() {
+        GetAllDefectPostion(1,"#defectlistBody");
+        GetAllDefectPostion(0, "#defectpositionTable");
+        $("#assigndefecttoPosition").empty();
+    }
+    function GetAllDefectPostion(status, tablebody) {
+             var categoryId = $("#categoryList").val();
+             var urlpath = '@Url.Action("GetAllDefectPosition", "QmsStyleCreator")';
+             $.ajax({
+                    url: urlpath,
+                    type: "Post",
+                    data: { Status: status, CategoryId: categoryId },
+                    async: true,
+                    success: function (data) {
+                     if (status == 0) {
+                         $('#defectselect').empty();
+                        $('#defectselect').append("<option value='0'>--Select Defect Position--</option>");
+                        for (var i = 0; i < data.length; i++) {
+                            $("#defectselect").append($("<option></option>").val(data[i].DefectPoistionId)
+                                .html(data[i].DefectPositionName));
+                         }
+                     } else if (status==1) {
+                         $(tablebody).empty();
+                        for (var i = 0; i < data.length; i++) {
+                            var newRow = $("<tr>");
+                            var cols = "";
+                            cols+='<td><input type="checkbox" value="'+data[i].DefectPoistionId+'" /></td>'
+                             cols += '<td>'+(i+1)+ '</td>';
+                             cols += '<td colspan="2">'+ data[i].DefectPositionName + '</td>';
+                            cols += '<td><i class="fa fa-trash" onclick="AddorDeleteDefect(' + data[i].DefectPoistionId + ',\'none\')" ></i></td > ';
+                            newRow.append(cols);
+                            $(tablebody).append(newRow);
+                        }
+                     }
+                        
+                    },
+                    error: function (err) {
+                        alert(err.responseText);
+                    }
+                });
+    }
+    function submenuChange(status) {
+        $("#defectcontainer").empty();
+        if (status == 1) {
+            $("#defectcontainer").html($("#defectsection").html());
+            
+        } else if (status==2) {
+
+        }
+    }
+    function AddDefect() {
+        if ($('#defectName').val() == "") {
+            swal({
+                title: 'Add a defect Name First',
+                type: 'error',
+                closeOnCancel: true
+            });
+        } else {
+            var defectName = $('#defectName').val();
+            if (defectName != "") {
+                AddorDeleteDefect(0, defectName);
+            }
+            
+        }
+    }
+    function AddorDeleteDefect(defectKey, defectName) {
+        var categoryId = $("#categoryList").val();
+        if (categoryId > 0) {
+            var urlpath = '@Url.Action("AddOrDeleteDefect", "QmsStyleCreator")';
+            $.ajax({
+                url: urlpath,
+                type: "Post",
+                data: { DefectKey: defectKey, DefectName: defectName, CatagoryId: categoryId },
+                async: true,
+                success: function (data) {
+                    if (data.isSuccess) {
+                        $('#defectName').val('');
+                        GetAllDefectPostion(1, '#defectlistBody', '#defectlistTable');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    if (xhr.status == 500) {
+                        swal({
+                            title: 'Cant Delete This Defect',
+                            type: 'error',
+                            closeOnCancel: true
+                        });
+                    } else {
+                        alert("Somme Error Occoured");
+                    }
+                        
+                }
+            });
+        } else {
+            swal({
+                title: 'Select Category First',
+                type: 'error',
+                closeOnCancel: true
+            });
+        }
+         
+    }
+    function SetToPosition(defectId, defectName) {
+        var status = false;
+        $('#assigndefecttoPosition tr').each(function () {
+            var did = parseInt($(this).find('input[type="text"]').val());
+            if (did == defectId) {
+                status = true;
+            }
+        });
+        if (status == false) {
+            var newRow = $("<tr>");
+            var cols = "";
+            //var rowno = $("#assigndefecttoPosition").row.length;
+            cols += '<td style="display:none"><input type="text" value=' + defectId + '></td>';
+            cols += '<td colspan="2">' + defectName + '</td>';
+            cols += '<td><i class="fa fa-trash" onclick="RemoveDefect(this)" ></i></td > ';
+            newRow.append(cols);
+            $("#assigndefecttoPosition").append(newRow);
+            
+        } else {
+            swal("Defect Already Added");
+        }
+    }
+
+    function SetAllDefectToPosition() {
+            var outputArray = [];
+            $("#assigndefecttoPosition tr").each(function () {
+                var pkey = $(this).find('input[type=text]').val();
+                outputArray.push(pkey);
+            });
+            $("#defectlistBody tr").each(function () {
+                var row = $(this);
+                if (row.find('input[type="checkbox"]').is(':checked')) {
+                    var keyfound = $(row).find("input[type=checkbox]").val();
+                    var keyvalue = $(row).find("td:eq(1)").text();
+                    var keyName = $(row).find("td:eq(2)").text();
+                    //if ($("#assigndefecttoPosition tr").length >= 0) {
+                        if (outputArray.indexOf(keyfound) !== -1) {
+                            //swal("Defect Already Added");
+                        } else {
+                            var newRow = $("<tr>");
+                            var cols = "";
+                            cols += '<td style="display:none"><input type="text" value=' + keyfound + '></td>';
+                            cols += '<td colspan="2">' + keyName + '</td>';
+                            cols += '<td><i class="fa fa-trash" onclick="RemoveDefect(this)" ></i></td > ';
+                            newRow.append(cols);
+                            $("#assigndefecttoPosition").append(newRow);
+                            //row.addClass("trcolor");
+                            row.css('background-color', '#c0c0c0');
+                        }
+                    //} else {
+                    //    swal("");
+                    //}
+                }
+            });
+    }
+    function RemoveDefect(ele) {
+        var defectId = $(ele).parents("tr").find('input[type="text"]').val();
+        $('#defectlistBody tr').each(function () {
+            var did = parseInt($(this).find('input[type="checkbox"]').val());
+            if (did == defectId) {
+                $(this).css('background-color', '#FFFFFF');
+                $(this).find('input[type=checkbox]').prop('checked', false);
+                $(ele).parents("tr").remove();
+            }
+        });
+    }
+    function GetDefectByPosition() {
+        if ($("#defectselect").val() != "") {
+            var positionId = $("#defectselect").val().toString();
+            var positionName = [];
+            $.each($("#defectselect option:selected"), function () {
+                positionName.push($(this).html());
+            });
+            //$('#positionNametext').val(positionName.join("+"));
+            var positionName = $("#defectselect").children("option:selected").html();
+            var urlpath = '@Url.Action("GetDefectByPosition", "QmsStyleCreator")';
+            $.ajax({
+                url: urlpath,
+                type: "Post",
+                data: { PositionId: positionId },
+                async: true,
+                success: function (data) {
+                    $('#assigndefecttoPosition').empty();
+                    for (var i = 0; i < data.length; i++) {
+                        var newRow = $("<tr>");
+                        var cols = "";
+                        cols += '<td style="display:none"><input type="text" value=' + data[i].DefectPoistionId + '></td>';
+                        cols += '<td colspan="2">' + data[i].DefectPositionName + '</td>';
+                        cols += '<td><i class="fa fa-trash" onclick="RemoveDefect(this)" ></i></td > ';
+                        newRow.append(cols);
+                        $("#assigndefecttoPosition").append(newRow);
+                    }
+                },
+                error: function (err) {
+                    alert(err.responseText);
+                }
+            });
+        } else {
+            $('#assigndefecttoPosition').empty();
+            $('#positionNametext').val("");
+        }
+    }
+    function LoadCategoryType() {
+            $('#categoryList').css({ "border-color": "#d3d3d3" });
+            var urlpath = '@Url.Action("GetCategoryType", "QmsStyleCreator")';
+            $.ajax({
+                url: urlpath,
+                dataType: 'json',
+                type: "Post",
+                data: {},
+                async: true,
+                success: function (data) {
+                    $('#categoryList').empty();
+                    $('#categoryList').append("<option value='0'>--Select Category Type--</option>");
+                    for (var i = 0; i < data.length; i++) {
+                        $("#categoryList").append($("<option></option>").val(data[i].CatagoryId)
+                            .html(data[i].CatagoryName));
+                    }
+                }
+            });
+    }
+    function AddDefectPostion() {
+        var positionName = $('#positionNametext').val();
+        if ($('#positionNametext').val() == "") {
+            swal({
+                title: 'Add a defect position Name First',
+                type: 'error',
+                closeOnCancel: true
+            });
+        } else {
+            UpdateDefectPosition(positionName,0);
+        }
+    }
+    function UpdateDefectPosition(positionName,positionId) {
+        var jsonData = {};
+        jsonData["DefectPositionName"] = positionName;
+        jsonData["DefectPoistionId"] = positionId;
+        jsonData["CategoryId"] =$("#categoryList").val();
+             var jsonObj = [];
+                $('#assigndefecttoPosition tr').each(function () {
+                    var myData = {};
+                    myData["DefectPoistionId"] = $(this).find('input[type="text"]').val();
+                    jsonObj.push(myData);
+                });
+        jsonData["DefectList"] = jsonObj;
+        if (jsonData["DefectList"].length <1) {
+            swal({
+                title: 'Please Assign Defect Before Submit!',
+                type: 'error',
+                closeOnCancel: true
+            });
+        }else {
+            var urlpath = '@Url.Action("AddDefectToPosition", "QmsStyleCreator")';
+             $.ajax({
+                 contentType: "application/json; charset=utf-8",
+                    data: JSON.stringify(jsonData),
+                    dataType: 'json',
+                    url: urlpath,
+                    type: "Post",
+                    async: true,
+                 success: function (data) {
+                     if (data.isSuccess) {
+                         swal(data.msg);
+                         GetAllDefectPostion(0, '#defectpositionTable');
+                         $('#assigndefecttoPosition').empty();
+                         $('#positionNametext').val("");
+                         $("#defectlistBody tr").each(function () {
+                             $(this).css('background-color', '#FFFFFF');
+                             $(this).find('input[type=checkbox]').prop('checked', false);
+                         });
+                     }
+                    },
+                    error: function (err) {
+                        alert(err.responseText);
+                    }
+                });
+        }
+            
+    }
+    function selectAll(idnumber) {
+        if ($(idnumber).prop("checked") == true) {
+            $("#defectlistBody tr").find('input[type=checkbox]').prop( "checked", true );   
+        }
+        else if ($(idnumber).prop("checked") == false) {
+            $("#defectlistBody tr").find('input[type=checkbox]').prop("checked", false);   
+        }
+    }
+</script>

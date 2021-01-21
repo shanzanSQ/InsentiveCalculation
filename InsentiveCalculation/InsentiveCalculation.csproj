@@ -137,9 +137,11 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\QmsStyleCreatorController.cs" />
     <Compile Include="Controllers\TrackerController.cs" />
     <Compile Include="DAL\AccountDAL.cs" />
     <Compile Include="DAL\HomeDAL.cs" />
+    <Compile Include="DAL\QmsAppDAL.cs" />
     <Compile Include="DataManager\DataAccessManager.cs" />
     <Compile Include="DataManager\DataBase.cs" />
     <Compile Include="DataManager\PasswordManager.cs" />
@@ -149,6 +151,12 @@
     </Compile>
     <Compile Include="Models\BarcodeGenarateModal.cs" />
     <Compile Include="Models\BarcodeModel.cs" />
+    <Compile Include="Models\DefectPostionModel.cs" />
+    <Compile Include="Models\ImageGalleryModel.cs" />
+    <Compile Include="Models\MasterSilhoteeTable.cs" />
+    <Compile Include="Models\QmsUserModel.cs" />
+    <Compile Include="Models\ShilhouteeGridTable.cs" />
+    <Compile Include="Models\StyleUploadModal.cs" />
     <Compile Include="Models\CommonModel.cs" />
     <Compile Include="Models\DataEntryTest.cs" />
     <Compile Include="Models\ModuleClassModel.cs" />
@@ -6422,10 +6430,21 @@
     <Content Include="Assets\bower_components\select2\tests\vendor\jquery-3.4.1.js" />
     <Content Include="Assets\bower_components\select2\tests\vendor\qunit-1.23.1.css" />
     <Content Include="Assets\bower_components\select2\tests\vendor\qunit-1.23.1.js" />
+    <Content Include="Content\bootstrap-multiselect.css" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\buttons.dataTables.min.css" />
+    <Content Include="Content\customcss.css" />
+    <Content Include="Content\Datatables\buttons.flash.min.js" />
+    <Content Include="Content\Datatables\buttons.html5.min.js" />
+    <Content Include="Content\Datatables\buttons.print.min.js" />
+    <Content Include="Content\Datatables\dataTables.buttons.min.js" />
+    <Content Include="Content\Datatables\jquery.dataTables.js" />
+    <Content Include="Content\Datatables\jquery.dataTables.min.js" />
+    <Content Include="Content\Datatables\jszip.min.js" />
+    <Content Include="Content\Datatables\pdfmake.min.js" />
     <Content Include="Content\LoadingModal.css" />
     <Content Include="Content\style.css" />
     <Content Include="Content\sweetalert.css" />
@@ -6442,6 +6461,8 @@
     <Content Include="Images\sqbackgraound.jpg" />
     <Content Include="Images\SQ_STATION_BANNER.jpg" />
     <Content Include="Image\ams.jpg" />
+    <Content Include="Image\barcode %281%29.gif" />
+    <Content Include="Image\barcode.gif" />
     <Content Include="Image\favicon.ico" />
     <Content Include="Image\first1.jpg" />
     <Content Include="Image\Individual Barcode.png" />
@@ -6453,6 +6474,7 @@
     <Content Include="Image\sort_both.png" />
     <Content Include="Image\sort_desc.png" />
     <Content Include="Image\sort_desc_disabled.png" />
+    <Content Include="Scripts\bootstrap-multiselect.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Assets\bower_components\bootstrap-colorpicker\.bower.json" />
@@ -6931,10 +6953,13 @@
     <None Include="Properties\PublishProfiles\CustomProfile.pubxml" />
     <None Include="Properties\PublishProfiles\CustomProfile1.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile1.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\datable.buttons.js" />
     <Content Include="Scripts\datable.min.css" />
     <Content Include="Scripts\datatable.min.js" />
+    <Content Include="Scripts\filter-table.js" />
+    <Content Include="Scripts\filter-table.min.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
@@ -6979,10 +7004,24 @@
     <Content Include="Views\Home\_workerPertialView.cshtml" />
     <Content Include="Views\Home\Report.cshtml" />
     <Content Include="Views\Home\_ReportPartialView.cshtml" />
+    <Content Include="Views\Shared\_previousLayout.cshtml" />
+    <Content Include="Views\QmsStyleCreator\StyleCreator.cshtml" />
+    <Content Include="Views\QmsStyleCreator\_uploadedImageView.cshtml" />
+    <Content Include="Views\QmsStyleCreator\_imageGallery.cshtml" />
+    <Content Include="Views\QmsStyleCreator\SilhoutteUploadMenu.cshtml" />
+    <Content Include="Views\QmsStyleCreator\_silhoutteGridInformation.cshtml" />
+    <Content Include="Views\QmsStyleCreator\_masterSilhoutteListData.cshtml" />
+    <Content Include="Views\QmsStyleCreator\_createStyleRegistration.cshtml" />
+    <Content Include="Views\QmsStyleCreator\DefectUpload.cshtml" />
+    <Content Include="Views\QmsStyleCreator\DefectEntry.cshtml" />
+    <Content Include="Views\QmsStyleCreator\AllQmsUserInfo.cshtml" />
+    <Content Include="Views\QmsStyleCreator\_CopyToExisting.cshtml" />
+    <Content Include="Views\Account\TestView.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="GenaratePDF\" />
+    <Folder Include="StyleUpload\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

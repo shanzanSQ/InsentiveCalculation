@@ -1,0 +1,378 @@
+﻿
+@{
+    ViewBag.Title = "StyleCreator";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Assets/bower_components/select2/dist/css/select2.min.css" rel="stylesheet" />
+<style type="text/css">
+    .form-control, .btn {
+        border-radius: 0px;
+    }
+
+    #frontsideDiv, #backsideDiv {
+        width: 100%;
+        width: 300px;
+    }
+
+    button {
+        text-align: center;
+    }
+
+    #expmenu {
+        margin: 0px;
+        padding: 0px;
+    }
+
+    #styleSubmrnu li a {
+        color: white;
+    }
+
+    #styleSubmrnu > li > .active > a:active {
+        color: white;
+        background-color: #0a0a22;
+    }
+
+    .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:focus, .navbar-default .navbar-nav > .active > a:hover {
+        color: #555;
+        background-color: #d65c14;
+    }
+
+    #styleNavigaton {
+        background-color: #37474F;
+    }
+
+    #maincontainer {
+        font-size: 12px;
+        margin-left: 0px;
+        padding-left: 0px;
+    }
+</style>
+<div class="container-fluid" id="maincontainer">
+    <strong>Style Registration</strong>
+    <div id="styleNavigaton" class="navbar navbar-default navbar-static-top">
+        <div id="expmenu">
+            <div class="navbar-collapse collapse">
+                <ul id="styleSubmrnu" class="nav navbar-nav">
+                    <li><a href="#" onclick="changeDivmenu(0)">New Style Registration</a></li>
+                    <li><a href="#" onclick="AllSilhoutteList()">Registered Style</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid" id="main_registration">
+    </div>
+
+</div>
+<div class="modal" id="copyModal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close"
+                        data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" style="text-align: center">Silhoutte <strong id="header_copy"></strong>Copy Style</h4>
+            </div>
+            <div id="modalbody" class="modal-body">
+                <div class="form-group-sm">
+                    <input type="hidden" id="copymasterSilId" />
+                    <label>Select Buyer </label>
+                    <select style="width: 100%;border-radius:0px" id="copyBuyer" onchange="LoadStyle(this.value, '#copyStyle');" class="form-control form-control-sm select2">
+                    </select>
+                    <label>Select Style </label>
+                    <select style="width: 100%;border-radius:0px" id="copyStyle" class="form-control form-control-sm select2">
+                    </select>
+                    <button type="button" style="margin-top:2px;text-align:center" class="btn btn-success btn-sm" onclick="CopyRegisteredStyle()">Copy Style</button>
+                </div>
+            </div>
+            <div class="modal-footer" >
+                <button type="button" id="remove_button" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+@Scripts.Render("~/bundles/jquery")
+
+<script type="text/javascript">
+    var frontOrBack = 0;
+    $("#styleSubmrnu").find('li:nth-child(1)').addClass("active");
+    changeDivmenu(0);
+    var silhoutee = 0;
+     $('#styleSubmrnu > li > a').click(function() {
+        $('li').removeClass();
+        $(this).parent().addClass('active');
+       // $("#spmenuid").html($(this).html());
+    });
+    function LoadBusinessUnit() {
+        $('#selectBU').css({ "border-color": "#d3d3d3" });
+        var urlpath = '@Url.Action("GetUserUnits", "QmsStyleCreator")';
+        $.ajax({
+            url: urlpath,
+            dataType: 'json',
+            type: "Post",
+            data: {},
+            async: true,
+            success: function (data) {
+                $('#selectBU').empty();
+                $('#selectBU').append("<option value='0'>--Select Cluster Unit--</option>");
+                for (var i = 0; i < data.length; i++) {
+                    $("#selectBU").append($("<option></option>").val(data[i].BusinessUnitId)
+                        .html(data[i].BusinessUnitName));
+                }
+            }
+        });
+    }
+    function LoadStyle(buyerId,selectID) {
+        $('#styleSelect').css({ "border-color": "#d3d3d3" });
+            var urlpath = '@Url.Action("LoadStyle", "Home")';
+            $.ajax({
+                url: urlpath,
+                dataType: 'json',
+                type: "Post",
+                data: { BuyerId: buyerId },
+                async: true,
+                success: function (data) {
+                    $(selectID).empty();
+                    $(selectID).append("<option value='0'>--Select Style--</option>");
+                    for (var i = 0; i < data.length; i++) {
+                        $(selectID).append($("<option></option>").val(data[i].StyleId)
+                            .html(data[i].StyleName));
+                    }
+                }
+            });
+        }
+    function LoadBuyer(buyerSelectID) {
+            $(buyerSelectID).css({ "border-color": "#d3d3d3" });
+            var urlpath = '@Url.Action("LoadBuyer", "Home")';
+            $.ajax({
+                url: urlpath,
+                dataType: 'json',
+                type: "Post",
+                data: {},
+                async: true,
+                success: function (data) {
+                    $(buyerSelectID).empty();
+                    $(buyerSelectID).append("<option value='0'>--Select Buyer--</option>");
+                    for (var i = 0; i < data.length; i++) {
+                        $(buyerSelectID).append($("<option></option>").val(data[i].BuyerId)
+                            .html(data[i].BuyerName));
+                    }
+                }
+            });
+    }
+    function LoadCategoryType() {
+            $('#silhoutteCatagory').css({ "border-color": "#d3d3d3" });
+            var urlpath = '@Url.Action("GetCategoryType", "QmsStyleCreator")';
+            $.ajax({
+                url: urlpath,
+                dataType: 'json',
+                type: "Post",
+                data: {},
+                async: true,
+                success: function (data) {
+                    $('#silhoutteCatagory').empty();
+                    $('#silhoutteCatagory').append("<option value='0'>--Select Category Type--</option>");
+                    for (var i = 0; i < data.length; i++) {
+                        $("#silhoutteCatagory").append($("<option></option>").val(data[i].CatagoryId)
+                            .html(data[i].CatagoryName));
+                    }
+                }
+            });
+    }
+    function ShowSilhoutteGallery(categoryType) {
+        var urlpath = '@Url.Action("GetImageGallery", "QmsStyleCreator")';
+        $.ajax({
+                url: urlpath,
+                type: "Post",
+                data: {CategoryType:categoryType},
+                async: true,
+                success: function (data) {
+                    $('#gallerydiv').empty();
+                    $('#gallerydiv').html(data);
+                },
+                error: function (err) {
+                    alert(err.responseText);
+                }
+            });
+    }
+    function RegisterStyleToDatabase() {
+        var bu = $("#selectBU").val();
+        var buyer = $("#buyerSelect").val();
+        var style = $("#styleSelect").val();
+        var category = $("#silhoutteCatagory").val();
+        if (bu == "" || bu == 0) {
+            $('#selectBU').css({ "border-color": "#FF0000" });
+        }else if (category == 0 || category == "") {
+            $('#silhoutteCatagory').css({ "border-color": "#FF0000" });
+        }else if (buyer == "" || buyer == 0) {
+            $('#buyerSelect').css({ "border-color": "#FF0000" });
+        } else if (style == 0 || style == "") {
+            $('#styleSelect').css({ "border-color": "#FF0000" });
+        }else if (silhoutee == 0) {
+            swal({
+                title: 'No Silhoutte Selected ',
+                type: 'error',
+                closeOnCancel: true
+
+            });
+        }else {
+            var urlpath = '@Url.Action("RegisterStyle", "QmsStyleCreator")';
+                $.ajax({
+                    url: urlpath,
+                    type: "Post",
+                    data: { BusinessUnitId: bu, BuyerId: buyer, StyleId: style, SilhoutteId: silhoutee, CategoryID: category },
+                    async: true,
+                    success: function (data) {
+                        if (data.isSuccess == true) {
+                            swal({
+                                title: 'Silhoutte Registered To Style Successfully',
+                                type: 'success',
+                                closeOnCancel: true
+
+                            }, function () {
+                                    GetSilhoutteInformation(data.pk);
+                            });
+                        } else {
+                            swal({
+                                title: 'This Style is already been registered',
+                                type: 'warning',
+                                closeOnCancel: true
+
+                            });
+                        }
+                    }
+                });
+        }
+        
+    }
+    function GetSilhoutteInformation(masterID) {
+        var urlpath = '@Url.Action("GetInformationMasterTable", "QmsStyleCreator")';
+        $.ajax({
+                url: urlpath,
+                type: "Post",
+                data: {MasterId: masterID },
+                async: true,
+                success: function (data) {
+                    $('#main_registration').empty();
+                    $('#main_registration').html(data);
+
+                },
+                error: function (err) {
+                    alert(err.responseText);
+                }
+            });
+    }
+    function AllSilhoutteList() {
+        frontOrBack = 0;
+        var urlpath = '@Url.Action("GetsilhoutteList", "QmsStyleCreator")';
+        $.ajax({
+                url: urlpath,
+                type: "Post",
+                data: {  },
+                async: true,
+                success: function (data) {
+                    $('#main_registration').empty();
+                    $('#main_registration').html(data);
+                    $("#listtableData").DataTable();
+                },
+                error: function (err) {
+                    alert(err.responseText);
+                }
+            });
+    }
+    function changeDivmenu(status) {
+        var urlpath = '@Url.Action("ChangeDivView", "QmsStyleCreator")';
+            $.ajax({
+                url: urlpath,
+                type: "Post",
+                data: {status:status},
+                    async: true,
+                    success: function(data) {
+                        if (data) {
+                            $('#main_registration').empty();
+                            $('#main_registration').html(data);
+                        }
+                    }
+                });
+    }
+    function DeleteAlert(mssilId) {
+                            swal({
+                                title: 'Are You Sure To Delete This',
+                                type: 'warning',
+                                closeOnCancel: true,
+                                showCancelButton: true,
+                                confirmButton: 'btn btn-success btn-sm',
+                                cancelButton: 'btn btn-danger btn-sm'
+                            }, function () {
+                                    DeleteregisteredStyle(mssilId);
+                            });
+    }
+    function DeleteregisteredStyle(mssilId) {
+        var urlpath = '@Url.Action("DeleteRegisteredStyle", "QmsStyleCreator")';
+        $.ajax({
+                url: urlpath,
+                type: "Post",
+                data: { MasterSilhouetteId:mssilId },
+                async: true,
+                    success: function (data) {
+                        if (data.isSuccess) {
+                            AllSilhoutteList();
+                        }
+                    },
+                    error: function (err) {
+                        alert(err.responseText);
+                    }
+            });
+    }
+
+    function CopyModalOpen(silhoutteName,silhoutteId) {
+        $('#copyModal').modal('toggle');
+       // $('.modal-title').html(value);
+        $('#header_copy').html(silhoutteName);
+        $('#copymasterSilId').val(silhoutteId);
+        $('#copyStyle').empty();
+        LoadBuyer('#copyBuyer');
+    }
+    function CopyRegisteredStyle() {
+        var styleId = $('#copyStyle').val();
+        var silhoutteId = $('#copymasterSilId').val();
+
+        if (styleId == "" || styleId <= 0 || silhoutteId <=0 || silhoutteId == "") {
+                swal({
+                   title: 'Please Select all value',
+                   type: 'warning',
+                   closeOnCancel: true
+                });
+        } else {
+             var urlpath = '@Url.Action("CopyRegisteredStyle", "QmsStyleCreator")';
+                $.ajax({
+                    url: urlpath,
+                    type: "Post",
+                    data: {StyleId: styleId, MasterSilhoutteId: silhoutteId},
+                    async: true,
+                    success: function (data) {
+                        if (data.isSuccess == true) {
+                            swal({
+                                title: 'Silhoutte Registered To Style Successfully',
+                                type: 'success',
+                                closeOnCancel: true
+
+                            }, function () {
+                                    GetSilhoutteInformation(data.pk);
+                            });
+                        } else {
+                            swal({
+                                title: 'This Style is already been registered',
+                                type: 'warning',
+                                closeOnCancel: true
+
+                            });
+                        }
+                        $('#copyModal').modal('toggle');
+                    }
+                });
+        }
+       
+    }
+</script>
+

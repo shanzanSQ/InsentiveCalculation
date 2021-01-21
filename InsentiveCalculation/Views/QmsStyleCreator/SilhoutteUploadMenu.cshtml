@@ -1,0 +1,140 @@
+﻿
+@{
+    ViewBag.Title = "SilhoutteUploadMenu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    .form-control,button{
+        border-radius:0px;
+    }
+    #frontsideDiv,#backsideDiv{
+        width:100%;
+        width:300px;
+    }
+    .col-md-4{
+        border-left:1px solid #d3d3d3;
+    }
+</style>
+<div class="container-fluid" id="maincontainer">
+    <h3 style="text-align:center">Silhouettee Upload</h3>
+    <hr />
+    <div class="container-fluid">
+        <div class="col-md-3">
+            <label for="silhoutteName">Enter Silhouette Name </label>
+            <input type="text" id="silhoutteName" onchange="colorChange(this)" class="form-control" />
+            <label for="silhoutteCatagory">Silhouette Category</label>
+            <select id="silhoutteCatagory" onchange="colorChange(this)" class="form-control"></select>
+            <label for="">Upload Front Side</label>
+            <input type="file" id="frontsidestyle" onchange="colorChange(this)" accept="image/x-png,image/gif,image/jpeg" class="form-control" />
+            <label for="">Upload Back Side</label>
+            <input type="file" id="backssidestyle" onchange="colorChange(this)" accept="image/x-png,image/gif,image/jpeg" class="form-control" />
+            <br />
+            <button class="btn btn-primary form-control" onclick="checkInput()">Upload New Silhoutte</button>
+        </div>
+        <div class="col-md-4">
+            <div>
+                <h4 style="text-align:center">Front Side</h4>
+                <hr />
+                <img id="frontsideDiv" width="100" height="250"/>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div>
+                <h4 style="text-align:center">Back Side</h4>
+                <hr />
+                <img id="backsideDiv"  width="100" height="250">
+            </div>
+        </div>
+    </div>
+
+</div>
+@Scripts.Render("~/bundles/jquery")
+<script type="text/javascript">
+
+    LoadCategoryType();
+
+    function checkInput() {
+        if ($('#silhoutteName').val()=="") {
+            $('#silhoutteName').css({ "border-color": "#FF0000" });
+        }else if ($('#silhoutteCatagory').val()<1 || $('#silhoutteCatagory').val()=="") {
+            $('#silhoutteCatagory').css({ "border-color": "#FF0000" });
+        }else if ($("#frontsidestyle").val()== "") {
+            $('#frontsidestyle').css({ "border-color": "#FF0000" });
+        } else if ($("#backssidestyle").val() == "") {
+            $('#backssidestyle').css({ "border-color": "#FF0000" });
+        } else {
+            SaveSilhouteeToDatabase();
+        }
+    }
+    function readURL(input,imagediv) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+
+            reader.onload = function(e) {
+                $(imagediv).attr('src', e.target.result);
+            }
+
+        reader.readAsDataURL(input.files[0]); // convert to base64 string
+        }
+    }
+
+    $("#frontsidestyle").change(function() {
+        readURL(this,"#frontsideDiv");
+    });
+    $("#backssidestyle").change(function() {
+        readURL(this,"#backsideDiv");
+    });
+
+    function SaveSilhouteeToDatabase() {
+       var fileData = new FormData();
+       var fileUpload = $("#frontsidestyle").prop('files');
+        var fileUpload2 = $("#backssidestyle").prop('files');
+        for (var i = 0; i < fileUpload.length; i++) {
+             fileData.append(fileUpload[i].name, fileUpload[i]);
+        }
+        for (var i = 0; i < fileUpload2.length; i++) {
+             fileData.append(fileUpload2[i].name, fileUpload2[i]);
+        }
+       fileData.append('SilhoutteName', $('#silhoutteName').val());
+       fileData.append('CatagoryId', $('#silhoutteCatagory').val());
+        var urlpath = '@Url.Action("UploadSilhoutte", "QmsStyleCreator")';
+        $.ajax({
+            url: urlpath,
+            type: "post", 
+            processData: false,
+            contentType: false,
+            data: fileData  ,
+            success: function (result) {
+                swal("Success");
+                window.location.href = '/QmsStyleCreator/StyleCreator';
+                
+            },
+            error: function (err) {
+                alert(err.responseText);
+            }
+        });
+    }
+    function LoadCategoryType() {
+            
+            var urlpath = '@Url.Action("GetCategoryType", "QmsStyleCreator")';
+            $.ajax({
+                url: urlpath,
+                dataType: 'json',
+                type: "Post",
+                data: {},
+                async: true,
+                success: function (data) {
+                    $('#silhoutteCatagory').empty();
+                    $('#silhoutteCatagory').append("<option value='0'>--Select Category Type--</option>");
+                    for (var i = 0; i < data.length; i++) {
+                        $("#silhoutteCatagory").append($("<option></option>").val(data[i].CatagoryId)
+                            .html(data[i].CatagoryName));
+                    }
+                }
+            });
+    }
+
+    function colorChange(itenMame) {
+        $(itenMame).css({ "border-color": "#d3d3d3" });
+    }
+</script>

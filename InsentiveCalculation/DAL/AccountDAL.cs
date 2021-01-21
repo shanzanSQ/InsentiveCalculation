@@ -38,7 +38,7 @@ namespace InsentiveCalculation.DAL
             catch (Exception e)
             {
                 accessManager.SqlConnectionClose(true);
-                throw;
+                throw e;
             }
             finally
             {
@@ -173,7 +173,7 @@ namespace InsentiveCalculation.DAL
             catch (Exception e)
             {
                 accessManager.SqlConnectionClose(true);
-                throw;
+                throw e;
             }
             finally
             {
